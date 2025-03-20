@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lbb_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:07:12 by totommi           #+#    #+#             */
-/*   Updated: 2025/03/20 02:06:26 by totommi          ###   ########.fr       */
+/*   Updated: 2025/03/20 12:19:40 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,17 @@
 
 t_player	*g_lobby = NULL;
 
-void	*lbb_init();
+void	*lbb_init(t_player *lobby);
 
-/* Allocates memory for a MAXPLAYERS size lobby.
-Assign the pointer returned by malloc(3) to the global variable,
-then returns it's value. */
-void	*lbb_init()
+/* lobby: t_player array of size MAXPLAYERS. 
+Sets the whole array to zero, then returns it's pointer.
+NOTE: IS THERE A WAY TO CHECK IF 'lobby' ISN'T OF SIZE 'MAXPLAYERS"? */
+void	*lbb_init(t_player *lobby)
 {
-	g_lobby = (t_player *)malloc(MAXPLAYERS * sizeof(t_player));
+	g_lobby = lobby;
 	if (g_lobby == NULL)
 		return (NULL);
-	bzero(g_lobby, MAXPLAYERS * sizeof(t_player));
+	memset(g_lobby, 0, MAXPLAYERS * sizeof(t_player));
 	return (g_lobby);
 }
 
