@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:42:19 by totommi           #+#    #+#             */
-/*   Updated: 2025/03/21 13:14:00 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/03/21 14:07:47 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,22 +71,22 @@ int	main(int argc, char *argv[])
 	print_lobby(lobby);
 	printf("== = == === = PLAYER COUNT: %zu == = == === = \n", lbb_player_count());
 	
-	/* printf("msg_name_length=%zu\n", msg_name_length(argv[1]));
-	printf("msg_get_name: '%s'\n", msg_get_name(argv[1], name));
-	printf("msg_ip_length=%zu\n", msg_ip_length(argv[1]));
-	printf("msg_get_ip: '%s'\n", msg_get_ip(argv[1], ip));
-	msg_get_pos(argv[1], pos);
-	printf("msg_get_pos: '%d_%d_%d'\n", pos[0], pos[1], pos[2]);
-	msg_get_tar(argv[1], tar);
-	printf("msg_get_tar: '%d_%d_%d'\n", tar[0], tar[1], tar[2]); */
+	// printf("msg_name_length=%zu\n", msg_name_length(argv[1]));
+	// printf("msg_get_name: '%s'\n", msg_get_name(argv[1], name));
+	// printf("msg_ip_length=%zu\n", msg_ip_length(argv[1]));
+	// printf("msg_get_ip: '%s'\n", msg_get_ip(argv[1], ip));
+	// msg_get_pos(argv[1], pos);
+	// printf("msg_get_pos: '%d_%d_%d'\n", pos[0], pos[1], pos[2]);
+	// msg_get_tar(argv[1], tar);
+	// printf("msg_get_tar: '%d_%d_%d'\n", tar[0], tar[1], tar[2]);
 	
-	char	str[] = "michele:255.255.255.255:-a9_+123_543213123";
-	printf("str_skip='%c'\n", str[str_skip(str, 2, ':')]);
+	// char	str[] = "michele:255.255.255.255:-a9_+123_543213123";
+	// printf("str_skip='%c'\n", str[str_skip(str, 2, ':')]);
 
 	//printf("msg='%s'\n", (char *)lbb_to_msg(lobby[0]));
-	/* printf("msg_get_pos_tar='%s'\n", msg_get_pos_tar(argv[1], pos_tar));
-	print_lobby(lobby);
-	printf("== = == === = PLAYER COUNT: %zu == = == === = \n", lbb_player_count()); */
+	// printf("msg_get_pos_tar='%s'\n", msg_get_pos_tar(argv[1], pos_tar));
+	// print_lobby(lobby);
+	// printf("== = == === = PLAYER COUNT: %zu == = == === = \n", lbb_player_count());
 	//printf("name='%s'\nip='%s'\npos=%d_%d_%d\n", lobby[0].name, lobby[0].ip, lobby[0].pos[0], lobby[0].pos[1], lobby[0].pos[2]);
 	return (0);
 }

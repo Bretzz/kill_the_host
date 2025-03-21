@@ -6,14 +6,14 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 12:40:26 by topiana-          #+#    #+#             */
-/*   Updated: 2025/03/20 12:56:56 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/03/21 14:09:04 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lbb.h"
 
 /* converts the stat in player into an alloc'd msg-string.
-RETURNS: the msg-string pointer. */
+RETURNS: the alloc'd msg-string pointer. */
 void	*lbb_to_msg(t_player player)
 {
 	char	*msg;
