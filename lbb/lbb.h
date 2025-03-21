@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 23:44:58 by totommi           #+#    #+#             */
-/*   Updated: 2025/03/20 12:56:29 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/03/21 12:30:16 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,24 @@ void	*lbb_init(t_player *lobby);
 size_t	lbb_name_length(const char *name);
 size_t	lbb_ip_length(const char *ip);
 
-/* READ DATA */
+/* READ DATA */ /* obtaining information about the database */
 
 int		lbb_get_index(const char *msg);
 int		lbb_next_free_slot(void);
 int		lbb_is_alive(t_player player);
 size_t	lbb_player_count(void);
 
-/* WRITE DATA */
+/* WRITE DATA */ /* writing data into the database */
 
 int		lbb_add_player(const char *msg);
 int		lbb_update_player(const char *msg);
 void	lbb_kill_player(const char *msg);
 void	*lbb_move_player(int src, int dest);
 void	lbb_push_up(void);
+
+/* GET DATA */ /* writing data from the database into a buffer */
+
+char	*lbb_get_full_stat(t_player player, void *buffer);
 
 /* LBB to MSG */
 

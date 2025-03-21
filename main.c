@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:42:19 by totommi           #+#    #+#             */
-/*   Updated: 2025/03/20 12:57:53 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/03/21 13:14:00 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,12 @@
 
 static void	print_player(t_player player)
 {
+	char	buffer[86];
+	
 	if (!lbb_is_alive(player))
 		printf("(empty slot)\n");
 	else
-		printf("%s:%s:%d_%d_%d\n", player.name, player.ip, player.pos[0], player.pos[1], player.pos[2]);
+		printf("%s\n", lbb_get_full_stat(player, buffer));
 }
 
 static void print_lobby(t_player *lobby)
@@ -37,6 +39,7 @@ static void print_lobby(t_player *lobby)
 int	main(int argc, char *argv[])
 {
 	t_player	lobby[MAXPLAYERS];
+	//char		pos_tar[30];
 	// char		name[43];
 	// char		ip[16];
 	// int			pos[3];
@@ -46,6 +49,10 @@ int	main(int argc, char *argv[])
 		return (1);
 	if (lbb_init(lobby) == NULL)
 		return (1);
+	print_lobby(lobby);
+	printf("== = == === = PLAYER COUNT: %zu == = == === = \n", lbb_player_count());
+	
+
 	lbb_add_player("pippo:4.3.2.1:1_2_3");
 	lbb_add_player("donalduck:192.168.1.5:100_200_300");
 	lbb_add_player("pluto:127.0.0.1:9999_9999_9999");
@@ -63,6 +70,7 @@ int	main(int argc, char *argv[])
 	lbb_push_up();
 	print_lobby(lobby);
 	printf("== = == === = PLAYER COUNT: %zu == = == === = \n", lbb_player_count());
+	
 	/* printf("msg_name_length=%zu\n", msg_name_length(argv[1]));
 	printf("msg_get_name: '%s'\n", msg_get_name(argv[1], name));
 	printf("msg_ip_length=%zu\n", msg_ip_length(argv[1]));
@@ -71,7 +79,14 @@ int	main(int argc, char *argv[])
 	printf("msg_get_pos: '%d_%d_%d'\n", pos[0], pos[1], pos[2]);
 	msg_get_tar(argv[1], tar);
 	printf("msg_get_tar: '%d_%d_%d'\n", tar[0], tar[1], tar[2]); */
-	printf("msg='%s'\n", (char *)lbb_to_msg(lobby[0]));
+	
+	char	str[] = "michele:255.255.255.255:-a9_+123_543213123";
+	printf("str_skip='%c'\n", str[str_skip(str, 2, ':')]);
+
+	//printf("msg='%s'\n", (char *)lbb_to_msg(lobby[0]));
+	/* printf("msg_get_pos_tar='%s'\n", msg_get_pos_tar(argv[1], pos_tar));
+	print_lobby(lobby);
+	printf("== = == === = PLAYER COUNT: %zu == = == === = \n", lbb_player_count()); */
 	//printf("name='%s'\nip='%s'\npos=%d_%d_%d\n", lobby[0].name, lobby[0].ip, lobby[0].pos[0], lobby[0].pos[1], lobby[0].pos[2]);
 	return (0);
 }

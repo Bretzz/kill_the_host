@@ -40,8 +40,10 @@ SRC_FILES		= \
 				\
 				msg_data_length.c \
 				msg_get_data.c \
+				msg_get_pos_tar.c \
+				msg_read_data.c \
 				\
-				utils.c
+				utils.c stolen_itoa.c
 
 SRCS			= $(addprefix $(SRCS_DIR), $(SRC_FILES))
 
