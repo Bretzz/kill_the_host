@@ -51,7 +51,9 @@ SRC_FILES		= main.c \
 				client_actions.c \
 				\
 				convert_stuff.c free_stuff.c \
-				ft_perror.c search_env.c
+				ft_perror.c search_env.c\
+				\
+				printers.c
 
 SRCS			= $(addprefix $(SRCS_DIR), $(SRC_FILES))
 

@@ -6,34 +6,34 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:42:19 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/06 23:05:52 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 23:33:06 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 //#include "msg.h"
 #include "kill_the_host.h"
 
-static void	print_player(t_player player)
-{
-	char	buffer[86];
+// static void	print_player(t_player player)
+// {
+// 	char	buffer[86];
 	
-	if (!lbb_is_alive(player))
-		ft_printf("(empty slot)\n");
-	else
-		ft_printf("%s\n", lbb_get_full_stat(player, buffer));
-}
+// 	if (!lbb_is_alive(player))
+// 		ft_printf("(empty slot)\n");
+// 	else
+// 		ft_printf("%s\n", lbb_get_full_stat(player, buffer));
+// }
 
-static void print_lobby(t_player *lobby)
-{
-	int	i;
+// static void print_lobby(t_player *lobby)
+// {
+// 	int	i;
 	
-	i = 0;
-	while (i < MAXPLAYERS)
-	{
-		print_player(lobby[i]);
-		i++;
-	}
-}
+// 	i = 0;
+// 	while (i < MAXPLAYERS)
+// 	{
+// 		print_player(lobby[i]);
+// 		i++;
+// 	}
+// }
 
 int	main(int argc, char *argv[], char *env[])
 {

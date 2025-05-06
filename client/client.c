@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:02:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 23:13:01 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 23:45:03 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 /* Try enstauring a TCP connection with the ip passed
 RETURNS: the socket returned by connect(3), -1 on error */
-int connect_to_server(const char *servip)
+static int connect_to_server(const char *servip)
 {
     int		servfd;
 	struct sockaddr_in serveraddr;
@@ -39,7 +39,7 @@ int connect_to_server(const char *servip)
 }
 
 /* return -1 on error, 0 on correct execution */
-int	test_connection(int servfd, t_player *lobby)
+static int	test_connection(int servfd, t_player *lobby)
 {
 	char	buffer[MAXLINE];
 
@@ -66,14 +66,14 @@ int	test_connection(int servfd, t_player *lobby)
 	// getting lobby stats from server
 	if (!cycle_player_msgs(buffer, lobby))
 	{
-		ft_perror(ERROR"corrupted message"RESET);
+		ft_printfd(STDERR_FILENO, ERROR"corrupted message%s\n", RESET);
 		return (-1);
 	}
 	return (0);
 }
 
 /* lobby[0] = host, lobby[1] = player */
-int	my_data_init(t_player *lobby, char *env[])
+static int	my_data_init(t_player *lobby, char *env[])
 {
 	if (lobby == NULL)
 		return (0);
@@ -94,7 +94,8 @@ int	client_routine(t_player *lobby, char *env[])
 		ft_printfd(STDERR_FILENO, ERROR"missing server ip:%s env variable not found\n", RESET);
 		return (-1);
 	}
-	my_data_init(lobby, env);
+	if (!my_data_init(lobby, env))
+		return (-1);
 	servfd = connect_to_server(get_serv_ip(env));
 	if (servfd < 0)
 		return (-1);

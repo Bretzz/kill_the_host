@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 20:51:32 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 22:56:30 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 23:32:51 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@ int	client_routine(t_player *lobby, char *env[]);
 int				ft_perror(const char *string);
 void			free_mtx(void **mtx);
 unsigned int	ip_to_uns(const char *ip);
+
+void			print_player(t_player player);
+void 			print_lobby(t_player *lobby);
 
 /* ENV INTERFACE */
 

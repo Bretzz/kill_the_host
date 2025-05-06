@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:03:05 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 22:45:02 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 23:40:30 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@
 NOTE: the semicolons (':') are MANDATORY, even if the fields are empty, e.g: 'pippo:8.8.8.8:::update'
 so there will always be at least 4 semicolons in each msg
 (future implementation of escapes to protect msg-inflation ;P)*/
+
+/* WARNING: we need to catch the 'we are dead' signal from the 'game' so
+that every thread can exit cleanly.*/
 
 # include "online.h"
 # include <errno.h>

@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:33:11 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 22:58:39 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 23:33:47 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ static void	*reciever(void *arg)
 		ft_printf(YELLOW"%d bytes: '%s' from Server\n"RESET, len, buffer);
 		if (!cycle_player_msgs(buffer, lobby))
 			ft_perror(ERROR"corrupted message"RESET);
-		}
+		print_lobby(lobby);
+	}
 	close(servfd);
 	return (NULL);
 }
