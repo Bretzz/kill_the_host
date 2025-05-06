@@ -19,18 +19,19 @@ CC				:= cc
 CFLAGS			:= -Wall -Wextra -Werror
 
 #Libs
+LIBFT			= libft/
 MSG				= msg/
 LBB				= lbb/
 
 #Linkers
-LINKS			=
+LINKS			= -lpthread
 
 #Includes
-INKS			= -I$(CURDIR) -I$(MSG) -I$(LBB)
+INKS			= -I$(CURDIR) -I$(MSG) -I$(LBB) -I$(LIBFT)
 
 #source files (expected in the root folder)
 SRCS_DIR		=
-SRC_FILES		= \
+SRC_FILES		= main.c \
 				lbb_data_length.c \
 				lbb_get_data.c \
 				lbb_init.c \
@@ -43,7 +44,14 @@ SRC_FILES		= \
 				msg_get_pos_tar.c \
 				msg_read_data.c \
 				\
-				utils.c stolen_itoa.c
+				msg_utils.c \
+				\
+				client.c \
+				client_reciever.c client_msg_handler.c \
+				client_actions.c \
+				\
+				convert_stuff.c free_stuff.c \
+				ft_perror.c search_env.c
 
 SRCS			= $(addprefix $(SRCS_DIR), $(SRC_FILES))
 
@@ -52,7 +60,7 @@ OBJS_DIR		= obj/
 OBJ_FILES		= $(SRCS:.c=.o)
 OBJS			= $(addprefix $(OBJS_DIR), $(OBJ_FILES))
 
-VPATH 			= $(MSG) $(LBB)
+VPATH 			= $(MSG) $(LBB) client/ utils/
 
 all: $(NAME)
 
@@ -60,18 +68,21 @@ $(OBJS_DIR):
 	@mkdir -p $(OBJS_DIR)
 
 $(OBJS_DIR)%.o: $(SRCS_DIR)%.c | $(OBJS_DIR) 
-	@$(CC) $(CFLAGS) $(INKS) $(DEFS) -c $< -o $@
+	$(CC) $(CFLAGS) $(INKS) $(DEFS) -c $< -o $@
 
 test: main.c $(OBJS)
 	@echo "${BOLD}compiling $@...${RESET}"
 	@$(CC) $(CFLAGS) main.c $(OBJS_DIR)/* $(LINKS) $(INKS) -o $@ \
 	&& echo "${LIGHT_GREEN}DONE${RESET}"
 
-$(NAME): $(OBJS)
-	@echo "${BOLD}compiling the $(NAME)...${RESET}"
-	@$(CC) $(CFLAGS) $(OBJS_DIR)*  $(LINKS) -o $(NAME) \
-	&& echo "${LIGHT_GREEN}DONE${RESET}"
+$(LIBFT)/libft.a:
+	@echo "${BOLD}compiling libft...${RESET}"
+	@$(MAKE) all -C $(LIBFT) --quiet
 
+$(NAME): $(LIBFT)/libft.a $(OBJS)
+	@echo "${BOLD}compiling the $(NAME)...${RESET}"
+	$(CC) $(CFLAGS) $(OBJS_DIR)* $(LIBFT)/libft.a $(LINKS) -o $(NAME)
+	@echo "${LIGHT_GREEN}DONE${RESET}"
 
 tar:
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
@@ -79,8 +90,10 @@ tar:
 
 clean:
 	@rm -f $(OBJS_DIR)* game minigame test
+	@$(MAKE) clean -C $(LIBFT) --quiet
 fclean: clean
 	@rm -rf $(OBJS_DIR)
+	@$(MAKE) fclean -C $(LIBFT) --quiet
 
 lre: clean all
 

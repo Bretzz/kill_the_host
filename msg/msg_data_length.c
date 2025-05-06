@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   msg_data_length.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:24:58 by totommi           #+#    #+#             */
-/*   Updated: 2025/03/20 00:50:35 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/06 20:38:48 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,9 @@ size_t	msg_ip_length(const char *msg)
 
 	if (msg == NULL)
 		return (0);
-	name = msg_name_length(msg) + 1;
+	name = msg_name_length(msg);
+	if (msg[name++] == '\0')
+		return (0);
 	i = 0;
 	while (msg[name + i] != '\0' && msg[name + i] != ':' && i < 15)
 		i++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lbb_data_length.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 23:50:33 by totommi           #+#    #+#             */
-/*   Updated: 2025/03/20 02:02:26 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/06 20:43:45 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ size_t	lbb_name_length(const char *name)
 		i++;
 	return (i);
 }
+
 /* EXPECTED: a char[15], null terminated,
 if the space was enough.
 RETUSNS: the length of the ip, 0 if 'ip' is NULL. */

@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 12:29:48 by topiana-          #+#    #+#             */
-/*   Updated: 2025/03/21 12:31:48 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 21:09:41 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ char	*lbb_get_full_stat(t_player player, void *buffer)
 
 	if (buffer == NULL)
 		return (NULL);
-	memset(buffer, 0, 86);
+	ft_memset(buffer, 0, 86);
 	msg = lbb_to_msg(player);
 	if (msg == NULL)
 		return (buffer);

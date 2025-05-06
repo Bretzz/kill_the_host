@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 12:40:26 by topiana-          #+#    #+#             */
-/*   Updated: 2025/03/21 14:09:04 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 21:17:51 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ void	*lbb_to_msg(t_player player)
 	msg = (char *)malloc(86 * sizeof(char));
 	if (msg == NULL)
 		return (NULL);
-	memset(msg, 0, 86);
-	ft_strlcpy(msg, player.name, strlen(player.name) + 1);
-	ft_strlcat(msg, ":", strlen(msg) + 2);
-	ft_strlcat(msg, player.ip, strlen(msg) + strlen(player.ip) + 1);
-	ft_strlcat(msg, ":", strlen(msg) + 2);
-	ft_strlcat(msg, player.pos_tar, strlen(msg) + strlen(player.pos_tar) + 1);
-	return(msg);
+	ft_memset(msg, 0, 86);
+	ft_strlcpy(msg, player.name, ft_strlen(player.name) + 1);
+	ft_strlcat(msg, ":", ft_strlen(msg) + 2);
+	ft_strlcat(msg, player.ip, ft_strlen(msg) + ft_strlen(player.ip) + 1);
+	ft_strlcat(msg, ":", ft_strlen(msg) + 2);
+	ft_strlcat(msg, player.pos_tar, ft_strlen(msg) + ft_strlen(player.pos_tar) + 1);
+	return (msg);
 }

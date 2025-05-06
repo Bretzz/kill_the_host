@@ -6,12 +6,14 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:28:39 by totommi           #+#    #+#             */
-/*   Updated: 2025/03/21 13:16:33 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 21:00:09 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MSG_H
 # define MSG_H
+
+# include "libft.h"
 
 //# include <unistd.h>
 # include <ctype.h>
@@ -42,9 +44,6 @@ int		has_tar(const char *msg);
 
 /* UTILS */
 
-size_t	ft_strlcat(char *dst, const char *src, size_t size);
-size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 int		str_skip(const char *s, int count, int c);
-char	*ft_itoa(int n);
 
 #endif

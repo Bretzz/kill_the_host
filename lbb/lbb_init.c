@@ -6,30 +6,39 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:07:12 by totommi           #+#    #+#             */
-/*   Updated: 2025/03/20 12:19:40 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 21:09:48 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lbb.h"
 
-t_player	*g_lobby = NULL;
+void	*lbb_init(void);
+void	*lbb_get_ptr(t_player *new_lobby);
 
-void	*lbb_init(t_player *lobby);
-
-/* lobby: t_player array of size MAXPLAYERS. 
-Sets the whole array to zero, then returns it's pointer.
-NOTE: IS THERE A WAY TO CHECK IF 'lobby' ISN'T OF SIZE 'MAXPLAYERS"? */
-void	*lbb_init(t_player *lobby)
+/* initialize the lbb_get_ptr's ptr to a
+malloc'd t_player array of size MAXPLAYERS.
+RETURN it's pointer. */
+void	*lbb_init(void)
 {
-	g_lobby = lobby;
-	if (g_lobby == NULL)
+	t_player	*lobby;
+
+	lobby = lbb_get_ptr(NULL);
+	free(lobby);
+	lobby = (t_player *)malloc(MAXPLAYERS * sizeof(t_player));
+	if (lobby == NULL)
 		return (NULL);
-	memset(g_lobby, 0, MAXPLAYERS * sizeof(t_player));
-	return (g_lobby);
+	ft_memset(lobby, 0, MAXPLAYERS * sizeof(t_player));
+	lbb_get_ptr(lobby);
+	return (lobby);
 }
 
 /* ! ! ! DANGEROUS ! ! ! */
-void	*lbb_get_ptr()
+void	*lbb_get_ptr(t_player *new_lobby)
 {
-	return (g_lobby);
+	static t_player	*lobby;
+
+	if (new_lobby == NULL)
+		return (lobby);
+	lobby = new_lobby;
+	return (lobby);
 }

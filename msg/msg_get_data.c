@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:19:39 by totommi           #+#    #+#             */
-/*   Updated: 2025/03/21 12:35:04 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 22:00:56 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	*msg_get_name(const char *msg, char *buffer)
 	
 	if (buffer == NULL)
 		return (NULL);
-	memset(buffer, 0, 43 * sizeof(char));
+	ft_memset(buffer, 0, 43 * sizeof(char));
 	if (msg == NULL)
 		return (buffer);
 	name = msg_name_length(msg);
@@ -54,11 +54,13 @@ char	*msg_get_ip(const char *msg, char *buffer)
 	
 	if (buffer == NULL)
 		return (NULL);
-	memset(buffer, 0, 16 * sizeof(char));
+	ft_memset(buffer, 0, 16 * sizeof(char));
 	if (msg == NULL)
 		return (buffer);
 	i[0] = msg_name_length(msg) + 1;
 	ip = i[0] + msg_ip_length(msg);
+	if (ip == i[0])
+		return (ft_strlcpy(buffer, "unknown", 8), buffer);
 	i[1] = 0;
 	while(i[0] < ip)
 	{
@@ -76,13 +78,13 @@ static int	*msg_atoi(const char *msg, int *dest)
 	int i;
 	
 	i = 0;
-	dest[0] = atoi(&msg[i]);
+	dest[0] = ft_atoi(&msg[i]);
 	while (msg[i] != '\0' && msg[i] != '_')
 		i++;
-	dest[1] = atoi(&msg[(++i)]);
+	dest[1] = ft_atoi(&msg[(++i)]);
 	while (msg[i] != '\0' && msg[i] != '_')
 		i++;
-	dest[2] = atoi(&msg[(++i)]);
+	dest[2] = ft_atoi(&msg[(++i)]);
 	return (dest);
 }
 
@@ -95,22 +97,14 @@ NOTE2: pos is left untouched if 'msg' or 'pos' are NULL. */
 int	*msg_get_pos(const char *msg, int *pos)
 {
 	int	skip;
-	int	i;
 
 	if (pos == NULL)
 		return (NULL);
-	memset(pos, 0, 3 * sizeof(int));
+	ft_memset(pos, 0, 3 * sizeof(int));
 	if (msg == NULL)
 		return (pos);
-	i = 2;
-	skip = 0;
-	while (msg[skip] != '\0' && i > 0)
-	{
-		if (msg[skip] == ':')
-			i--;
-		skip++;
-	}
-	if (!isdigit(msg[skip])
+	skip = str_skip(msg, 2, ':');
+	if (!ft_isdigit(msg[skip])
 		&& msg[skip] != '+'
 		&& msg[skip] != '-')
 		return (pos);
@@ -125,22 +119,14 @@ RETURNS: the tar pointer, NULL if tar is NULL. */
 int	*msg_get_tar(const char *msg, int *tar)
 {
 	int	skip;
-	int	i;
 
 	if (tar == NULL)
 		return (NULL);
-	memset(tar, 0, 3 * sizeof(int));
+	ft_memset(tar, 0, 3 * sizeof(int));
 	if (msg == NULL)
 		return (tar);
-	i = 3;
-	skip = 0;
-	while (msg[skip] != '\0' && i > 0)
-	{
-		if (msg[skip] == ':')
-			i--;
-		skip++;
-	}
-	if (!isdigit(msg[skip])
+	skip = str_skip(msg, 3, ':');
+	if (!ft_isdigit(msg[skip])
 		&& msg[skip] != '+'
 		&& msg[skip] != '-')
 		return (tar);

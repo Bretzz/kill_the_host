@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   stolen_itoa.c                                      :+:      :+:    :+:   */
+/*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 17:37:31 by topiana-          #+#    #+#             */
-/*   Updated: 2025/03/21 13:14:56 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:04:51 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "msg.h"
+#include "libft.h"
 
 static int	ft_numalloc(char **str, int n);
 
@@ -26,7 +26,7 @@ static int	ft_numalloc(char **str, int n)
 	}
 	if (n < 0)
 		len++;
-	*str = (char *)calloc((len + 1), sizeof(char));
+	*str = (char *)ft_calloc((len + 1), sizeof(char));
 	if (*str == NULL)
 		return (0);
 	return (len);
@@ -60,13 +60,3 @@ char	*ft_itoa(int n)
 	}
 	return (str);
 }
-/*
-#include <stdlib.h>
-#include <stdio.h>
-
-int	main(int argc, char *argv[])
-{
-	//printf("%s\n", itoa(ft_atoi(argv[1])));
-	printf("%s\n", ft_itoa(ft_atoi(argv[1])));
-	return (0);
-}*/

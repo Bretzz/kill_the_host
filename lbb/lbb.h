@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 23:44:58 by totommi           #+#    #+#             */
-/*   Updated: 2025/03/21 12:30:16 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 20:57:28 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,10 @@
 #  define MAXPLAYERS 10
 # endif
 
+# include "libft.h"
 # include "msg.h"
 
-typedef struct	s_player
+typedef struct s_player
 {
 	char	name[43];	// max name length: 42
 	char	ip[16];		//max ip length: 15
@@ -28,11 +29,13 @@ typedef struct	s_player
 	char	pos_tar[30];
 }				t_player;
 
-extern t_player *g_lobby;
+/* PORTABLE POINTER */
+
+void	*lbb_get_ptr(t_player *new_lobby);
 
 /* BASICS */
 
-void	*lbb_init(t_player *lobby);
+void	*lbb_init(void);
 
 /* DATA MEASUREMENT */
 
