@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:42:19 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/06 23:33:06 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 02:45:14 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	main(int argc, char *argv[], char *env[])
 	// int			pos[3];
 	// int			tar[3];
 	
+	(void)env;
 	if (argc < 2)
 		return (1);
 	if (lbb_init() == NULL)
@@ -56,7 +57,7 @@ int	main(int argc, char *argv[], char *env[])
 	lbb_add_player("pippo:4.3.2.1:1_2_3");
 	lbb_add_player("donalduck:192.168.1.5:100_200_300");
 	lbb_add_player("pluto:127.0.0.1:9999_9999_9999");
-	lbb_add_player("michele:255.255.255.255:-a9_+123_543213123");
+	// lbb_add_player("michele:255.255.255.255:-a9_+123_543213123");	// crash on mac
 	lbb_add_player(argv[1]);
 	print_lobby(lobby);
 	ft_printf("== = == === = PLAYER COUNT: %u == = == === = \n", lbb_player_count());
@@ -88,9 +89,15 @@ int	main(int argc, char *argv[], char *env[])
 	// print_lobby(lobby);
 	// ft_printf("== = == === = PLAYER COUNT: %u == = == === = \n", lbb_player_count());
 	//ft_printf("name='%s'\nip='%s'\npos=%d_%d_%d\n", lobby[0].name, lobby[0].ip, lobby[0].pos[0], lobby[0].pos[1], lobby[0].pos[2]);
-	int servfd = client_routine(lobby, env);
-	ft_printf("servfd=%d\n", servfd);
-	//usleep(1000);
-	free(lbb_get_ptr(NULL));
+	ft_printf(LOG"THIS THING CRASHES: right now each player has his online stuff in 'server' mode but the message aren't beingn rebound to anyone, so it's useless, he just listens.\nthe client is almost done, we need the send-message part then, thhe ones that qquits cleanly on host's death (also for server), then all good%s\n", RESET);
+	// int	listid;
+	// int servfd;
+	// if (!ft_strcmp("host", get_serv_ip(env)))
+	// 	listid = server_routine(lobby, env);
+	// else
+	// 	servfd = client_routine(lobby, env);
+	// ft_printf("servfd=%d\n", servfd);
+	// usleep(1000);
+	lbb_delete_lobby((lbb_get_ptr(NULL)));
 	return (0);
 }

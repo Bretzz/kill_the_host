@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_perror.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:23:28 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 23:02:47 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 01:40:21 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,19 @@
 #include <errno.h>
 #include <string.h>
 
+static char	*ft_strerror(int code)
+{
+	if (code == 256)
+		return ("corrrupted message");
+	else if (code == 256)
+		return ("lobby not initialized");
+	else
+		return (strerror(errno));
+		
+}
+
 int	ft_perror(const char *string)
 {
-	ft_printfd(STDERR_FILENO, "%s: %s\n", string, strerror(errno));
+	ft_printfd(STDERR_FILENO, "%s: %s\n", string, ft_strerror(errno));
 	return (errno);
 }

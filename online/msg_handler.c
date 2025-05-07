@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client_msg_handler.c                               :+:      :+:    :+:   */
+/*   msg_handler.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:31:36 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 22:58:50 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 02:51:05 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "kill_the_host.h"
-#include "client.h"
+#include "online.h"
+#include <errno.h>
 
 int	parse_msg_string(const char *msg);
 int	one_player_action(const char *msg, t_player *lobby);
@@ -50,7 +51,9 @@ int	one_player_action(const char *msg, t_player *lobby)
 	const int	action = parse_msg_string(msg);
 
 	if (action < 0)
-		errno = 1;
+		errno = 256;
+	else if (lobby == NULL)
+		errno = 257;
 	else if (action == 1)
 		new_player(msg, lobby);
 	else if (action == 2)

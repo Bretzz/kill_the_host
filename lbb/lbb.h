@@ -3,15 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   lbb.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 23:44:58 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/06 20:57:28 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 02:36:02 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LBB_H
 # define LBB_H
+
+# define HOST 0
+# define PLAYER 1
 
 # ifndef MAXPLAYERS
 #  define MAXPLAYERS 10
@@ -27,6 +30,7 @@ typedef struct s_player
 	int		pos[3];
 	int		tar[3];
 	char	pos_tar[30];
+	void	*online;	// ptr to other stuff
 }				t_player;
 
 /* PORTABLE POINTER */
@@ -59,10 +63,15 @@ void	lbb_push_up(void);
 
 /* GET DATA */ /* writing data from the database into a buffer */
 
-char	*lbb_get_full_stat(t_player player, void *buffer);
+char	*lbb_get_full_stats(t_player player, void *buffer);
+char	*lbb_get_lobby_stats(t_player *lobby, void *buffer);
 
 /* LBB to MSG */
 
 void	*lbb_to_msg(t_player player);
+
+/* CLEANUP */
+
+void	lbb_delete_lobby(t_player *lobby);
 
 #endif

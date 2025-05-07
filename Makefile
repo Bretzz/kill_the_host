@@ -38,6 +38,7 @@ SRC_FILES		= main.c \
 				lbb_read_data.c \
 				lbb_write_data.c \
 				lbb_to_msg.c \
+				lbb_delete_lobby.c \
 				\
 				msg_data_length.c \
 				msg_get_data.c \
@@ -47,8 +48,9 @@ SRC_FILES		= main.c \
 				msg_utils.c \
 				\
 				client.c \
-				client_reciever.c client_msg_handler.c \
-				client_actions.c \
+				client_reciever.c \
+				\
+				actions.c msg_handler.c \
 				\
 				convert_stuff.c free_stuff.c \
 				ft_perror.c search_env.c\
@@ -62,7 +64,10 @@ OBJS_DIR		= obj/
 OBJ_FILES		= $(SRCS:.c=.o)
 OBJS			= $(addprefix $(OBJS_DIR), $(OBJ_FILES))
 
-VPATH 			= $(MSG) $(LBB) client/ utils/
+VPATH 			= $(MSG) $(LBB) \
+				online/ \
+				online/client/ online/server \
+				utils/
 
 all: $(NAME)
 

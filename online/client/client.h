@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:03:05 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 23:40:30 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 02:50:28 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,20 +25,8 @@ so there will always be at least 4 semicolons in each msg
 /* WARNING: we need to catch the 'we are dead' signal from the 'game' so
 that every thread can exit cleanly.*/
 
-# include "online.h"
-# include <errno.h>
+# include "../online.h"
 
 int		client_reciever(int servfd, t_player *lobby);
-
-/* DB MANAGEMENT */
-
-int		parse_msg_string(const char *msg);
-int		one_player_action(const char *msg, t_player *lobby);
-int		cycle_player_msgs(char *msg, t_player *lobby);
-
-void	kill_player(const char *msg, t_player *lobby);
-void	update_player(const char *msg, t_player *lobby);
-void	host_player(const char *msg, t_player *lobby);
-void	new_player(const char *msg, t_player *lobby);
 
 #endif 

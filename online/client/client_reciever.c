@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client_reciever.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:33:11 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 23:33:47 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 02:43:00 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static void	*reciever(void *arg)
 		}
 		ft_printf(YELLOW"%d bytes: '%s' from Server\n"RESET, len, buffer);
 		if (!cycle_player_msgs(buffer, lobby))
-			ft_perror(ERROR"corrupted message"RESET);
+			ft_perror(ERROR"handler failure"RESET);
 		print_lobby(lobby);
 	}
 	close(servfd);
@@ -43,7 +43,7 @@ static void	*reciever(void *arg)
 }
 // if (handle_client_players(buffer, recenv) < 0)
 // {
-// 	ft_printf(HOST"A NEW HOST WILL RISE%s\n", RESET);
+// 	ft_printf(HOSTLOG"A NEW HOST WILL RISE%s\n", RESET);
 // 	return (close(recenv->player[0].socket), free(recenv), NULL);
 // }
 

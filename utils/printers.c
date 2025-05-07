@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   printers.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:31:53 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 23:33:00 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 01:19:36 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	print_player(t_player player)
 	if (!lbb_is_alive(player))
 		ft_printf("(empty slot)\n");
 	else
-		ft_printf("%s\n", lbb_get_full_stat(player, buffer));
+		ft_printf("%s\n", lbb_get_full_stats(player, buffer));
 }
 
 void	print_lobby(t_player *lobby)

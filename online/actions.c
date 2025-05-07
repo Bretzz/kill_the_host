@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client_actions.c                                   :+:      :+:    :+:   */
+/*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:03:47 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 22:59:07 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 02:49:28 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "kill_the_host.h"
-#include "client.h"
+#include "lbb.h"
 
 void	kill_player(const char *msg, t_player *lobby);
 void	update_player(const char *msg, t_player *lobby);
@@ -61,4 +60,4 @@ void	host_player(const char *msg, t_player *lobby)
 	if (slot < 0)
 		return ;
 	lbb_move_player(slot, 0);
-}	
+}

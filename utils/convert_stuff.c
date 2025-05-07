@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   convert_stuff.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 14:30:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 23:02:09 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 00:57:53 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ a decimal number (ft_atoi(3)).
 RETURNS: the number (int) obtained. */
 int		ft_atohexi(const char *nptr)
 {
-	int		nb;
-	char	base[] = "0123456789abcdef";
+	int			nb;
+	const char	base[] = "0123456789abcdef";
 
 	if (nptr == NULL)
 		return (0);
@@ -91,5 +91,6 @@ unsigned int	ip_to_uns(const char *ip)
 	}
 	free_mtx((void **)split);
 	uns = ft_atohexi(hex);
+	ft_printf("returning %u\n", uns);
 	return (uns);
 }

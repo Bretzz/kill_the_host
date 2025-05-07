@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kill_the_host.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 20:51:32 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 23:32:51 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 02:43:54 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,20 @@
 # define WHITE "\033[0;37m"
 # define RESET "\033[0m"
 
+# define LOG "\033[0;36m"
 # define ERROR "\033[0;41m"
 # define STATS "\033[0;34m"
 # define KILL "\033[0;101m"
 # define LISTEN "\033[0;101m"
-# define HOST "\033[0;43m"
+# define HOSTLOG "\033[0;43m"
 
 /* CLIENT */
 
-int	client_routine(t_player *lobby, char *env[]);
+int			client_routine(t_player *lobby, char *env[]);
+
+/* SERVER */
+
+int	server_routine(t_player *lobby, char *env[]);
 
 /* UTILS */
 

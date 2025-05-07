@@ -1,26 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   online.h                                           :+:      :+:    :+:   */
+/*   lbb_delete_lobby.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 21:04:41 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 21:05:12 by topiana-         ###   ########.fr       */
+/*   Created: 2025/05/07 02:33:52 by totommi           #+#    #+#             */
+/*   Updated: 2025/05/07 02:52:00 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ONLINE_H
-# define ONLINE_H
+#include "lbb.h"
 
-//net libraries
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-//# include <sys/types.h>
-# include <netdb.h>
+/* Clean way to free the whole player array */
+void	lbb_delete_lobby(t_player *lobby)
+{
+	unsigned int	i;
 
-# define MYPORT 42042
-# define MAXLINE 1024 
-
-#endif
+	i = 0;
+	while (i < MAXPLAYERS)
+	{
+		free(lobby[i].online);
+		i++;
+	}
+	free(lobby);
+}
