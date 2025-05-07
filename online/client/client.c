@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:02:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 02:48:50 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/07 23:03:29 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,36 +34,37 @@ static int connect_to_server(const char *servip)
 		ft_perror(ERROR"connection failed"RESET);
 		return (-1);
 	}
-	ft_printf(GREEN"connection accepted!!!\n"RESET);
+	ft_printf(CONNECT"connection accepted!!!%s\n", RESET);
 	return (servfd);
 }
 
 /* return -1 on error, 0 on correct execution */
 static int	test_connection(int servfd, t_player *lobby)
 {
-	char	buffer[MAXLINE];
+	char	buffer[MAXLINE + 1];
 
+	ft_memset(buffer, 0, sizeof(buffer));
 	//player signature name:ip
-	ft_memset(buffer, 0, MAXLINE);
-	ft_strlcpy(buffer, lobby[PLAYER].name, MAXLINE);
-	ft_strlcat(buffer, ":", MAXLINE);
-	ft_strlcat(buffer, lobby[PLAYER].ip, MAXLINE);
-	ft_strlcat(buffer, ":", MAXLINE);
-	ft_strlcat(buffer, "new", MAXLINE);
+	buffer_player_action(lobby[PLAYER], "new", buffer);
+
+	ft_printf(YELLOW"[test] sending '%s' to server%s\n", buffer, RESET);
 
 	//send test
-	if (send(servfd, buffer, 30, 0) < 0)
+	if (send(servfd, buffer, ft_strlen(buffer), 0) < 0)
 	{
 		ft_perror(ERROR"send failure"RESET);
 		return (-1);
 	}
 
+	ft_memset(buffer, 0, sizeof(buffer));
 	// recieving server data name:ip (ip defaults to 'host')
-	if (recv(servfd, buffer, MAXLINE - 1, 0) < 0)
+	if (recv(servfd, buffer, MAXLINE, 0) < 0)
 	{
 		ft_perror(ERROR"recv failed"RESET);
 		return (-1);
 	}
+
+	ft_printf(YELLOW"[test] recieved '%s' from server%s\n", buffer, RESET);
 
 	// getting lobby stats from server
 	if (!cycle_player_msgs(buffer, lobby))
@@ -82,32 +83,40 @@ static int	my_data_init(t_player *lobby, char *env[])
 	// ft_strlcpy(lobby[0].ip, get_serv_ip(env), 16);
 	ft_strlcpy(lobby[PLAYER].ip, get_locl_ip(env), 16);
 	ft_strlcpy(lobby[PLAYER].name, get_my_name(env), 43);
+	print_lobby(lobby);
+	ft_printf("== = == === = PLAYER COUNT: %u == = == === = \n", lbb_player_count());
 	return (1);
 }
 
-/* returns -1 on error, the fd of the socket
-to talk with the server on correct execution */
-int	client_routine(t_player *lobby, char *env[])
+/* returns 0 on error, the tid of the reciever-thread
+to join before exit.
+NOTE: the socket is stored in *(int *)lobby->online */
+pthread_t	client_routine(t_player *lobby, char *env[])
 {
 	int	servfd;
+	int	servtid;
 
 	if (!ft_strcmp("ip-not-found", get_serv_ip(env)))
 	{
 		ft_printfd(STDERR_FILENO, ERROR"missing server ip:%s env variable not found\n", RESET);
-		return (-1);
+		return (0);
 	}
 	if (!my_data_init(lobby, env))
-		return (-1);
-	ft_printf(LOG"data init ok...%s\n", RESET);
+		return (0);
+	ft_printf(LOG">data init ok...%s\n", RESET);
 	servfd = connect_to_server(get_serv_ip(env));
 	if (servfd < 0)
-		return (-1);
-	ft_printf(LOG"testing connection...%s\n", RESET);
+		return (0);
+	ft_printf(LOG">testing connection...%s\n", RESET);
 	if (test_connection(servfd, lobby) < 0)
-		return (close(servfd), -1);
-	ft_printf(LOG"connection approved...%s\n", RESET);
-	if (client_reciever(servfd, lobby) < 0)
-		return (close(servfd), -1);
-	ft_printf(LOG"reciever started%s\n", RESET);
-	return (servfd);
+		return (close(servfd), 0);
+	ft_printf(LOG">connection approved...%s\n", RESET);
+	print_lobby(lobby);
+	ft_memcpy(&lobby->online, &servfd, sizeof(int));
+	servtid = client_reciever(servfd, lobby);
+	if (servtid == 0)
+		return (close(servfd), 0);
+	// ft_printf(LOG">reciever started%s\n", RESET);
+	// ft_printf(LOG">client started on tid: %u%s\n", servtid, RESET);
+	return (servtid);
 }

@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:16:46 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/06 21:18:09 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 23:46:36 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void	lbb_kill_player(const char *msg)
 	index = lbb_get_index(msg);
 	if (index < 0)
 		return ;
+	ft_printf("killing %s\n", lobby[index].name);
 	ft_memset(&lobby[index], 0, sizeof(t_player));
 }
 

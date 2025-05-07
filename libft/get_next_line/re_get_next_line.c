@@ -6,12 +6,11 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 20:44:45 by topiana-          #+#    #+#             */
-/*   Updated: 2025/04/17 15:53:58 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 14:33:14 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "re_get_next_line.h"
-#include "libft.h"
 
 /* checks the list for a node with the corresponding 'fd'. */
 static int	there_are_leftovers(int fd, t_list_fd *leftovers)
@@ -35,7 +34,7 @@ static char	*what_was_left_behind(int fd, t_list_fd **leftovers)
 		*leftovers = (*leftovers)->next;
 	if (*leftovers == NULL)
 		return (NULL);
-	line = ft_substr((*leftovers)->str, 0, -1);
+	line = ft_substr((*leftovers)->str, 0, ft_strlen((*leftovers)->str));
 	*leftovers = list_fd_del_fd(fd, *leftovers);
 	return (line);
 }
@@ -44,12 +43,16 @@ static char	*really_nice_line(int fd, char *line, t_list_fd **leftovers)
 {
 	unsigned int	i;
 	char			*rnl;
+	char			*afternl;
 
 	i = ft_strichr(line, '\n');
 	rnl = ft_substr(line, 0, i);
 	if (line[i] != '\0')
 	{
-		*leftovers = list_fd_add_back(*leftovers, fd, ft_strdup(&line[i]));
+		afternl = ft_strdup(&line[i]);
+		if (afternl == NULL)
+			return (free(line), free(rnl), NULL);
+		*leftovers = list_fd_add_back(*leftovers, fd, afternl);
 	}
 	free(line);
 	return (rnl);
@@ -95,13 +98,19 @@ char	*get_next_line(int fd)
 	{
 		line = what_was_left_behind(fd, &leftovers);
 	}
-	if (ft_strichr(line, '\n') != 0)
+	if (line && ft_strichr(line, '\n') != 0)
 	{
 		line = really_nice_line(fd, line, &leftovers);
 	}
 	else
 	{
-		line = finally_read_from_fd(fd, line, &leftovers);
+		line = ft_strdup("");
 	}
+	if (line == NULL)
+	{
+		leftovers = list_fd_del_fd(fd, leftovers);
+		return (NULL);
+	}
+	line = finally_read_from_fd(fd, line, &leftovers);
 	return (line);
 }

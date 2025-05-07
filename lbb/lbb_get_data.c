@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lbb_get_data.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 12:29:48 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 02:48:34 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/07 22:11:15 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*lbb_get_full_stats(t_player player, void *buffer)
 	msg = lbb_to_msg(player);
 	if (msg == NULL)
 		return (buffer);
-	ft_strlcpy(buffer, msg, strlen(msg) + 1);
+	ft_strlcpy(buffer, msg, 86);
 	free(msg);
 	return (buffer);
 }
@@ -50,7 +50,7 @@ char	*lbb_get_lobby_stats(t_player *lobby, void *buffer)
 	buffer_c = (char *)buffer;
 	count = 0;
 	i = 0;
-	while (i < MAXPLAYERS)
+	while (i < MAXPLAYERS && count < player_count)
 	{
 		if (lbb_is_alive(lobby[i]))
 		{

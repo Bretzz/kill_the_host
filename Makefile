@@ -24,10 +24,28 @@ MSG				= msg/
 LBB				= lbb/
 
 #Linkers
-LINKS			= -lpthread
+LINKS			= -L/usr/lib -L$(MLX_DIR) -lXext -lX11 -lm -lz -lpthread
 
 #Includes
-INKS			= -I$(CURDIR) -I$(MSG) -I$(LBB) -I$(LIBFT)
+INKS			= -I$(CURDIR) -I$(MSG) -I$(LBB) -I$(LIBFT) -Ionline/ -I$(MLX_DIR)
+
+ifeq ($(UNAME),Darwin)
+	MLX_DIR		= minilibx_opengl
+	MLX			= $(MLX_DIR)/libmlx.a
+	URL			= https://cdn.intra.42.fr/document/document/31539/minilibx_opengl.tgz
+	DEFS		=
+	INKS		+= -I/usr/X11/include -I$(MLX_DIR)
+	LINKS		+= -I/opt/homebrew/include -I/usr/X11/include -L/usr/X11/lib -framework OpenGL -framework AppKit
+else ifeq ($(UNAME),Linux)
+	MLX_DIR		= minilibx-linux
+	MLX			= $(MLX_DIR)/libmlx_$(UNAME).a
+	URL			= https://cdn.intra.42.fr/document/document/31538/minilibx-linux.tgz
+	DEFS		=
+	INKS		+= -I/usr/include
+	LINKS		+= -lmlx_Linux -I$(MLX_DIR)
+else
+	UNAME = Error
+endif
 
 #source files (expected in the root folder)
 SRCS_DIR		=
@@ -48,12 +66,20 @@ SRC_FILES		= main.c \
 				msg_utils.c \
 				\
 				client.c \
-				client_reciever.c \
+				client_reciever.c client_sender.c \
 				\
-				actions.c msg_handler.c \
+				server.c \
+				server_reciever.c server_sender.c \
+				\
+				actions.c buffer_actions.c \
+				msg_handler.c \
+				\
+				minigame.c \
+				input_handling.c put_stuff.c \
 				\
 				convert_stuff.c free_stuff.c \
-				ft_perror.c search_env.c\
+				ft_perror.c search_env.c \
+				libft_extension.c \
 				\
 				printers.c
 
@@ -67,6 +93,7 @@ OBJS			= $(addprefix $(OBJS_DIR), $(OBJ_FILES))
 VPATH 			= $(MSG) $(LBB) \
 				online/ \
 				online/client/ online/server \
+				minigame/ \
 				utils/
 
 all: $(NAME)
@@ -82,13 +109,25 @@ test: main.c $(OBJS)
 	@$(CC) $(CFLAGS) main.c $(OBJS_DIR)/* $(LINKS) $(INKS) -o $@ \
 	&& echo "${LIGHT_GREEN}DONE${RESET}"
 
-$(LIBFT)/libft.a:
+$(MLX_DIR):
+	@echo "${BOLD}creating $(MLX_DIR)...${RESET}"
+	@curl $(URL) --output $(MLX_DIR).tgz \
+	&& tar -xf $(MLX_DIR).tgz \
+	&& rm -f $(MLX_DIR).tgz \
+	&& ls $(MLX_DIR) || mv `ls | grep $(MLX_DIR)` $(MLX_DIR) \
+	&& $(MAKE) -C $(MLX_DIR)
+
+$(MLX): $(MLX_DIR)
+	@rm -f $(MLX_DIR)/libmlx.a
+	@$(MAKE) -C $(MLX_DIR) --quiet
+
+$(LIBFT)libft.a:
 	@echo "${BOLD}compiling libft...${RESET}"
 	@$(MAKE) all -C $(LIBFT) --quiet
 
-$(NAME): $(LIBFT)/libft.a $(OBJS)
+$(NAME): $(LIBFT)libft.a $(MLX) $(OBJS)
 	@echo "${BOLD}compiling the $(NAME)...${RESET}"
-	$(CC) $(CFLAGS) $(OBJS_DIR)* $(LIBFT)/libft.a $(LINKS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS_DIR)* $(LIBFT)libft.a $(MLX) -I$(INKS) $(LINKS) -o $(NAME)
 	@echo "${LIGHT_GREEN}DONE${RESET}"
 
 tar:
@@ -96,7 +135,7 @@ tar:
 	@tar -cf $(NAME).tar --exclude=".git" --exclude="$(NAME)" --exclude="$(OBJS_DIR)" --exclude="$(MLX_DIR)" ./*
 
 clean:
-	@rm -f $(OBJS_DIR)* game minigame test
+	@rm -f $(OBJS_DIR)* game test
 	@$(MAKE) clean -C $(LIBFT) --quiet
 fclean: clean
 	@rm -rf $(OBJS_DIR)

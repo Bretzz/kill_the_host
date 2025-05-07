@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 21:13:48 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 13:04:26 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int			ft_printfd(int fd, const char *s, ...);
 //extra stuff
 
 double		ft_atof(const char *nptr);
+int			is_white(char *str);
 
 //libft.h
 

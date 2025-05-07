@@ -1,32 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.h                                           :+:      :+:    :+:   */
+/*   libft_extension.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 23:35:15 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 12:32:23 by topiana-         ###   ########.fr       */
+/*   Created: 2025/05/07 12:55:40 by topiana-          #+#    #+#             */
+/*   Updated: 2025/05/07 13:03:49 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_H
-# define SERVER_H
+#include "libft.h"
 
-/* WARNING: we need to catch the 'we are dead' signal from the 'game' so
-that every thread can exit cleanly. */
+int	ft_chrnum(const char *s, int c);
+int	is_white(char *str);
 
-# include "../online.h"
-# include <pthread.h>
-
-typedef struct s_wrapper
+/* counts how many instances of 'c' in 's'. */
+int	ft_chrnum(const char *s, int c)
 {
-	int			socket;
-	pthread_t	tid;
-}				t_wrapper;
+	unsigned int	n;
+	size_t			i;
 
-pthread_t	server_reciever(int listfd, t_player *lobby);
-
-int			server_sender(t_player *lobby, void *buffer, size_t size);
-
-#endif
+	i = 0;
+	n = 0;
+	while (s[i] != '\0')
+	{
+		if (s[i] == c)
+			n++;
+		i++;
+	}
+	return (n);
+}

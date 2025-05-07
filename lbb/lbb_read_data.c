@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:54:44 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/06 21:10:09 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 12:20:31 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	lbb_is_alive(t_player player)
 	t_player	dead_player;
 
 	ft_memset(&dead_player, 0, sizeof(t_player));
-	if (!ft_memcmp(&player, &dead_player, sizeof(t_player)))
+	if (!ft_memcmp(&player, &dead_player, (sizeof(t_player) - sizeof(void *))))
 		return (0);
 	return (1);
 }

@@ -1,32 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.h                                           :+:      :+:    :+:   */
+/*   is_white.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 23:35:15 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 12:32:23 by topiana-         ###   ########.fr       */
+/*   Created: 2025/05/07 13:03:38 by topiana-          #+#    #+#             */
+/*   Updated: 2025/05/07 13:04:08 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_H
-# define SERVER_H
+#include "libft.h"
 
-/* WARNING: we need to catch the 'we are dead' signal from the 'game' so
-that every thread can exit cleanly. */
-
-# include "../online.h"
-# include <pthread.h>
-
-typedef struct s_wrapper
+/* checks weather a line is composed of only blank spaces. */
+int	is_white(char *str)
 {
-	int			socket;
-	pthread_t	tid;
-}				t_wrapper;
+	size_t	i;
 
-pthread_t	server_reciever(int listfd, t_player *lobby);
-
-int			server_sender(t_player *lobby, void *buffer, size_t size);
-
-#endif
+	i = 0;
+	while (str[i] && ft_isspace(str[i]))
+		i++;
+	if (str[i] == '\0')
+		return (1);
+	return (0);
+}

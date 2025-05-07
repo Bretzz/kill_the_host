@@ -6,13 +6,14 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 12:45:10 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 21:53:06 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 21:22:39 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lbb.h"
 
 int		str_skip(const char *s, int count, int c);
+char 	*rebuild_coord(int *coord, char *buffer);
 
 /* return the index of the first char after 'count'
 instances of 'c' in 's'. */
@@ -28,4 +29,32 @@ int	str_skip(const char *s, int count, int c)
 		skip++;
 	}
 	return (skip);
+}
+
+/* expected buffsize >14 */
+char *rebuild_coord(int *coord, char *buffer)
+{
+	char	*coord_itoa[3];
+	int		i;
+	
+	if (buffer == NULL)
+		return (NULL);
+	ft_memset(buffer, 0, 15);
+	if (coord == NULL)
+		return (buffer);
+	coord_itoa[0] = ft_itoa(coord[0]);
+	coord_itoa[1] = ft_itoa(coord[1]);
+	coord_itoa[2] = ft_itoa(coord[2]);
+	if (!coord_itoa[0] || !coord_itoa[1] || !coord_itoa[2])
+		return (buffer);
+	i = 0;
+	while (i < 3)
+	{
+		ft_strlcat(buffer, coord_itoa[i], ft_strlen(buffer) + ft_strlen(coord_itoa[i]) + 1);
+		if (i != 2)
+			ft_strlcat(buffer, "_", ft_strlen(buffer) + 2);
+		i++;
+	}
+	free(coord_itoa[0]); free(coord_itoa[1]); free(coord_itoa[2]);
+	return (buffer);
 }

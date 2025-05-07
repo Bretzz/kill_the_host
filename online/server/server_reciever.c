@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_reciever.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:48:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 02:29:50 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/08 00:11:11 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,31 @@ static int	handshake(int connfd, t_player *lobby)
 {
 	char	buffer[MAXLINE];
 
-	if (recv(connfd, buffer, MAXLINE) < 0)
+	ft_memset(buffer, 0, sizeof(buffer));
+	if (recv(connfd, buffer, MAXLINE, 0) < 0)
 	{
 		ft_perror(ERROR"recv failure"RESET);
 		return (0);
 	}
-	if (!cycle_player_msgs(buffer))
+	
+	ft_printf(YELLOW"[handshake] recv '%s' from client%s\n", buffer, RESET);
+
+	if (!cycle_player_msgs(buffer, lobby))
 	{
 		ft_perror(ERROR"corrupted message"RESET);
 		return (0);
 	}
-	lbb_get_lobby_stats(lobby, buffer);
-	if (send(connfd, buffer, MAXLINE) < 0)
+
+	// telling the lobby the new player is here
+	if (server_sender(lobby, buffer, ft_strlen(buffer)) < 0)
+		return (0);
+
+	// telling the player were the lobby is
+	buffer_lobby_action(lobby, "new", buffer);
+
+	ft_printf(YELLOW"[handshake] send '%s' to client%s\n", buffer, RESET);
+
+	if (send(connfd, buffer, MAXLINE, 0) < 0)
 	{
 		ft_perror(ERROR"send failure"RESET);
 		return (0);
@@ -42,36 +55,52 @@ static void	*private_reciever(void *arg)
 	t_player *const				lobby = lbb_get_ptr(NULL);
 	char						buffer[MAXLINE];
 	int							connfd;
+	size_t						len;
 
 	connfd = *(int *)arg;
 	if (!handshake(connfd, lobby))
 		return (close(connfd), NULL);
+	ft_printf(LOG">handshake completed successuflly%s\n", RESET);
 	while (!0)
 	{
-		if (!lbb_is_alive(lobby[HOST]))
+		if (!lbb_is_alive(lobby[HOST]))	// temporary way of clean kill
+		{
+			ft_printfd(STDERR_FILENO, HOSTLOG"host died%s\n", RESET);
 			break ;
-		if (recv(connfd, buffer, MAXLINE) < 0)
+		}
+		ft_memset(buffer, 0, sizeof(buffer));
+		if ((len = recv(connfd, buffer, MAXLINE, 0)) < 0)
 		{
 			ft_perror(ERROR"recv failure"RESET);
-			return (0);
+			break ;
 		}
-		if (!cycle_player_msgs(buffer))
+		ft_printf(YELLOW"%d bytes: '%s' from Client\n"RESET, len, buffer);
+		if (!cycle_player_msgs(buffer, lobby))
 		{
 			ft_perror(ERROR"handler failure"RESET);
-			return (0);
+			break ;
 		}
+		// chaos
+		// ft_printf(BLUE"== = = == == =\n");
+		// print_quick_lobby(lobby);
+		// ft_printf(RESET);
+		if (server_sender(lobby, buffer, ft_strlen(buffer) * sizeof(char)) < 0)
+			break ;
 	}
-	close(connfd);
-	return (NULL);
+	// client:10.12.2.7:1_1_1::update
+	ft_printf(LOG"private listener shutting down\n"RESET);
+	return (close(connfd), NULL);
 }
 
 static void	*reciever(void *arg)
 {
 	t_player *const		lobby = lbb_get_ptr(NULL);
+	t_wrapper			*wrapper;
 	int					listfd;
-	int					connfd;
-	int					slot;
+	// int					connfd;
+	// int					slot;
 
+	// ft_printf(LOG">reciever is starting...%s\n", RESET);
 	listfd = *(int *)arg;
 	if (lobby == NULL)
 	{
@@ -81,19 +110,28 @@ static void	*reciever(void *arg)
 	while (!0)
 	{
 		while (lbb_player_count() >= MAXPLAYERS)
-			usleep(1000);
-		slot = lbb_next_free_slot();
-		lobby[slot].online->socket = accept(listfd, NULL, NULL);	// we can get info on the dude without the NULLS
-		if (lobby[slot].online->socket < 0)
+			usleep(10000);
+		if (!lbb_is_alive(lobby[HOST]))	// temporary way of clean kill
+		{
+			ft_printfd(STDERR_FILENO, HOSTLOG"host died%s\n", RESET);
+			break ;
+		}
+		wrapper = lobby[lbb_next_free_slot()].online;
+		ft_printf(LISTEN">listening on %d...%s\n", listfd, RESET);
+		wrapper->socket = accept(listfd, NULL, NULL);	// we can get info on the dude without the NULLS
+		if (wrapper->socket < 0)
+		{
 			ft_perror(ERROR"accept failed"RESET);
+			return(close(listfd), NULL);
+		}
 		else
-			ft_printf(GREEN"connection accepted!\n"RESET);
-		if (pthread_create(&lobby[slot].online->tid, NULL, &private_reciever, &lobby[slot].online->socket) < 0)
+			ft_printf(CONNECT"connection accepted!%s\n", RESET);
+		if (pthread_create(&wrapper->tid, NULL, &private_reciever, &wrapper->socket) < 0)
 			ft_perror(ERROR"reciever launch failed"RESET);
-		// pthread_detach(tid);
+		pthread_detach(wrapper->tid);
 	}
-	close(listfd);
-	return(NULL);
+	ft_printf(LOG"server shutting down\n"RESET);
+	return(close(listfd), NULL);
 }
 
 /* Spawns a thread that listen to clients that want to connect */
@@ -103,10 +141,15 @@ pthread_t	server_reciever(int listfd, t_player *lobby)
 	pthread_t	tid;
 
 	(void)lobby;	// <-- this is sad
-	if (pthread_create(&tid, NULL, &reciever, &listfd) < 0)
+	if (listfd != *(int *)(lobby->online))
+	{
+		ft_printfd(STDERR_FILENO, ERROR"reciever failure:%s socket corrupted", RESET);
+		return (0);
+	}
+	if (pthread_create(&tid, NULL, &reciever, lobby->online) < 0)
 	{
 		ft_perror(ERROR"reciever launch failed"RESET);
-		return (-1);
+		return (0);
 	}
 	return (tid);
 }

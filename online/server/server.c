@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:34:21 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 02:44:10 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/07 17:44:30 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static int	open_the_ears(void)
 		ft_perror(ERROR"bind failure"RESET);
 		return (-1);
 	}
-	if (listen(listfd, 10))
+	if (listen(listfd, MAXPLAYERS))
 	{
 		ft_perror(ERROR"listen failure"RESET);
 		return (-1);
@@ -55,29 +55,37 @@ static int	my_data_init(t_player *lobby, char *env[])
 	if (lobby == NULL)
 		return (0);
 	ft_strlcpy(lobby[HOST].name, get_my_name(env), 43);
-	ft_strlcpy(lobby[HOST].ip, get_locl_ip(env), 43);
+	ft_strlcpy(lobby[HOST].ip, get_locl_ip(env), 16);
 	i = 0;
 	while (i < MAXPLAYERS)
 	{
-		lobby[i].online = (t_player_wrapper *)malloc(sizeof(t_player_wrapper))
+		lobby[i].online = (t_wrapper *)malloc(sizeof(t_wrapper));
 		if (lobby[i].online == NULL)
 			return (0);
-		ft_memset(lobby[i].online, 0, sizeof(t_player_wrapper));
+		ft_memset(lobby[i].online, 0, sizeof(t_wrapper));
 		i++;
 	}
+	print_lobby(lobby);
+	ft_printf("== = == === = PLAYER COUNT: %u == = == === = \n", lbb_player_count());
 	return (1);
 }
 
-/* each player has his 'online' pointer assigned */
-int	server_routine(t_player *lobby, char *env[])
+/* each player has his 'online' pointer assigned.
+RETURNS: the tid' of the listener-thred, 0 on error */
+pthread_t	server_routine(t_player *lobby, char *env[])
 {
+	t_wrapper	*host;
+
 	if (!my_data_init(lobby, env))
-		return (-1);
-	lobby->online->socket = open_the_ears();
-	if (lobby->online->socket < 0)
-		return (-1);
-	lobby->online->tid = server_reciever(lobby->online->socket, lobby->online);
-	if (lobby->online->tid < 0)
-		return (close(lobby->online->socket), -1);
-	return (lobby->online->tid);
+		return (0);
+	host = lobby->online;	// wrapper of the player[0]
+	host->socket = open_the_ears();
+	if (host->socket < 0)
+		return (0);
+	ft_printf(LOG">starting server on %d%s\n", host->socket, RESET);
+	host->tid = server_reciever(host->socket, lobby);
+	if (host->tid == 0)
+		return (close(host->socket), 0);
+	ft_printf(LOG">server started on tid: %u%s\n", host->tid, RESET);
+	return (host->tid);
 }

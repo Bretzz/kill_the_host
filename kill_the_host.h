@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kill_the_host.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 20:51:32 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 02:43:54 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/07 22:57:51 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "libft.h"
 # include "lbb.h"
+# include <pthread.h>
 
 //colors
 # define BOLD "\033[1m"
@@ -33,24 +34,33 @@
 # define STATS "\033[0;34m"
 # define KILL "\033[0;101m"
 # define LISTEN "\033[0;101m"
+# define CONNECT "\033[0;42m"
 # define HOSTLOG "\033[0;43m"
+
+/* GAME */
+
+int	minigame(int *index, t_player *lobby);
 
 /* CLIENT */
 
-int			client_routine(t_player *lobby, char *env[]);
+pthread_t	client_routine(t_player *lobby, char *env[]);
+int	client_sender(int servfd, void *buffer, size_t size);
 
 /* SERVER */
 
-int	server_routine(t_player *lobby, char *env[]);
+pthread_t	server_routine(t_player *lobby, char *env[]);
+int	server_sender(t_player *lobby, void *buffer, size_t size);
 
 /* UTILS */
 
 int				ft_perror(const char *string);
 void			free_mtx(void **mtx);
 unsigned int	ip_to_uns(const char *ip);
+int				ft_chrnum(const char *s, int c);
 
 void			print_player(t_player player);
 void 			print_lobby(t_player *lobby);
+void			print_quick_lobby(t_player *lobby);
 
 /* ENV INTERFACE */
 

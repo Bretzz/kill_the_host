@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:28:39 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/06 21:00:09 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/07 21:22:45 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,6 @@ int		has_tar(const char *msg);
 /* UTILS */
 
 int		str_skip(const char *s, int count, int c);
+char 	*rebuild_coord(int *coord, char *buffer);
 
 #endif

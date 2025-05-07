@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   msg_handler.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:31:36 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 02:51:05 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/07 22:32:39 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,21 +50,25 @@ int	one_player_action(const char *msg, t_player *lobby)
 {
 	const int	action = parse_msg_string(msg);
 
+	ft_printf(LOG"action value %d%s\n", action, RESET);
 	if (action < 0)
 		errno = 256;
 	else if (lobby == NULL)
+	{
 		errno = 257;
+		return (0);
+	}
 	else if (action == 1)
 		new_player(msg, lobby);
 	else if (action == 2)
-		update_player(msg, lobby);
+		lbb_update_player(msg);
 	else if (action == 3)
-		kill_player(msg, lobby);
+		lbb_kill_player(msg);
 	else if (action == 4)
 		host_player(msg, lobby);
 	else
 		errno = 1;
-	return (errno);	//may be necessary to set manually errno to 0 before
+	return (action);	//may be necessary to set manually errno to 0 before
 }
 
 int	cycle_player_msgs(char *msg, t_player *lobby)
@@ -79,13 +83,13 @@ int	cycle_player_msgs(char *msg, t_player *lobby)
 		if (msg[i] == '\n')
 		{
 			msg[i] = '\0';
-			if (one_player_action(&msg[last], lobby) != 0)
+			if (one_player_action(&msg[last], lobby) <= 0)
 				return (0);
 			last = i + 1;
 		}
 		i++;
 	}
-	if (one_player_action(&msg[last], lobby) != 0)
+	if (one_player_action(&msg[last], lobby) <= 0)
 		return (0);
 	return (1);
 }
