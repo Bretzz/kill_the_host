@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:31:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 22:22:56 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 14:23:52 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color);
 int		put_line(t_mlx *mlx, int *p, int *t, int *my_pos, unsigned int color);
+void	put_square(void *my_struct, int x, int y, float z, unsigned int color);
 
 void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color)
 {
@@ -30,6 +31,26 @@ void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color)
 		return ;
 	dst = mlx->img.addr + (y * mlx->img.line_length + x * (mlx->img.bits_per_pixel / sizeof(int *)));
 	*(unsigned int *)dst = color;
+}
+
+void	put_square(void *my_struct, int x, int y, float z, unsigned int color)
+{
+	const int	side = 10;
+	int			s_x;
+	int			s_y;
+
+	(void)z;
+	s_y = y - (side / 2);
+	while (s_y < y + (side / 2))
+	{
+		s_x = x - (side / 2);
+		while (s_x < x + (side / 2))
+		{
+			my_pixel_put(my_struct, s_x, s_y, 0, color);
+			s_x++;
+		}
+		s_y++;
+	}
 }
 
 /* returns 0 if we got killed. */
@@ -50,7 +71,7 @@ int	put_line(t_mlx *mlx, int *p, int *t, int *my_pos, unsigned int color)
 		//my stuff (death check)
 		my_pixel_put(mlx, proj[0], proj[1], 0, color);
 		// ft_printf("printing %i %i\n", p[0], p[1]);
-		if (i > 0 && proj[0] == my_pos[0] && proj[1] == my_pos[1]) return (0);
+		if (i > 5 && abs(proj[0] - my_pos[0]) < 5 && abs(proj[1] - my_pos[1]) < 5) return (0);
 
 		if (proj[0] == t[0] && proj[1] == t[1]) break;
 	}

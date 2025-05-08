@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:42:19 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/08 02:10:10 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/08 13:37:47 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@
 
 int	main(int argc, char *argv[], char *env[])
 {
-	const unsigned char	small = 0x7f;
 	t_player			*lobby;
 	int					index;
 	//char		pos_tar[30];
@@ -51,7 +50,7 @@ int	main(int argc, char *argv[], char *env[])
 	(void)argc; (void)argv; (void)env;
 	// if (argc < 2)
 	// 	return (1);
-	if (lbb_init((void *)&small) == NULL)
+	if (lbb_init() == NULL)
 		return (1);
 	ft_printf("lobby initialized\n");
 	lobby = lbb_get_ptr(NULL);

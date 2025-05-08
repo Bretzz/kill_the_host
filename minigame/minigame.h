@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 21:37:55 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 14:21:27 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ typedef struct s_mlx
 {
 	int				win_x;
 	int				win_y;
+	int				key_up_dw[2];
+	int				key_lx_rx[2];
 	void			*mlx;
 	void			*win;
 	t_img			img;
@@ -77,8 +79,12 @@ typedef struct s_mlx
 int		handle_heypress(int keysym, t_mlx *mlx);
 int		handle_mouse(int keysym, int x, int y, t_mlx *mlx);
 
+int		handle_just_press(int keysym, void *arg);
+int		handle_just_release(int keysym, void *arg);
+
 void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color);
 int		put_line(t_mlx *mlx, int *p, int *t, int *my_pos, unsigned int color);
+void	put_square(void *my_struct, int x, int y, float z, unsigned int color);
 
 void	send_all(t_mlx *mlx, const char *msg, size_t msg_size);
 

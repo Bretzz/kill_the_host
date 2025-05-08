@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minigame.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 01:46:30 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/08 14:21:37 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,11 @@ if we got hit by a line (even ours) we exit. */
 		color = 0xFF0000;
 	else
 		color = 0xFFFFFF;
-	my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
+	put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
+	//my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
 	if (lobby[index].tar[0] || lobby[index].tar[1])
 	{
-		if (lineframes[index] == 10)
+		if (lineframes[index] == 1)
 		{
 			ft_memset(&lobby[index].tar, 0, sizeof(t_point));
 			lineframes[index] = 0;
@@ -131,9 +132,28 @@ static int	put_board(t_mlx *mlx)
 static int	update_frame(t_mlx *mlx)
 {
 	static int	frame;
-
-	if (frame % 60 == 0)
+	char		moved;
+	char		buffer[92];
+	
+	if (frame++ % 20 == 0)
+	{
+		moved = 0;
+		if (mlx->key_up_dw[0] == 1 && ++moved)
+			mlx->lobby[*mlx->index].pos[1] -= 10;
+		if (mlx->key_up_dw[1] == 1 && ++moved)
+			mlx->lobby[*mlx->index].pos[1] += 10;
+		if (mlx->key_lx_rx[0] == 1 && ++moved)
+			mlx->lobby[*mlx->index].pos[0] -= 10;
+		if (mlx->key_lx_rx[1] == 1 && ++moved)
+			mlx->lobby[*mlx->index].pos[0] += 10;
+		if (moved != 0)
+		{
+			buffer_player_action(mlx->lobby[*mlx->index], "update", buffer);
+			// ft_printf("send_all(%p, %s, %u)\n", mlx, buffer, ft_strlen(buffer));
+			send_all(mlx, buffer, ft_strlen(buffer));
+		}
 		put_board(mlx);
+	}
 	usleep(1000);
 	return (0);
 }
@@ -174,6 +194,8 @@ int	minigame(int *index, t_player *lobby)
 	//game mechanics
 	mlx_mouse_hook(mlx.win, &handle_mouse, &mlx);
 	mlx_key_hook(mlx.win, &handle_heypress, &mlx);
+	mlx_hook(mlx.win, KeyPress, KeyPressMask, &handle_just_press, &mlx);
+	mlx_hook(mlx.win, KeyRelease, KeyReleaseMask, &handle_just_release, &mlx);
 	// mlx_do_key_autorepeaton(mlx.mlx);
 	
 	//window management
