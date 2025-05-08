@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kill_the_host.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 20:51:32 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 15:18:07 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 23:49:21 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,28 +30,26 @@
 # define RESET "\033[0m"
 
 # define LOG "\033[0;36m"
+# define WARN "\033[48;5;229m"
 # define ERROR "\033[0;41m"
 # define STATS "\033[0;34m"
 # define KILL "\033[0;101m"
 # define LISTEN "\033[0;101m"
 # define CONNECT "\033[0;42m"
-# define HOSTLOG "\033[0;43m"
 
 /* GAME */
 
-int	minigame(int *index, t_player *lobby);
+int	minigame(int *index, int socket);
 
 /* CLIENT */
 
-pthread_t	client_routine(t_player *lobby, char *env[]);
-pthread_t	client_udp_routine(t_player *lobby, char *env[]);
+int	client_routine(t_player *lobby, char *envp[]);
 int	client_sender(int servfd, void *buffer, size_t size);
 
 /* SERVER */
 
-pthread_t	server_routine(t_player *lobby, char *env[]);
-pthread_t	server_udp_routine(t_player *lobby, char *env[]);
-int	server_sender(t_player *lobby, void *buffer, size_t size);
+int	server_routine(t_player *lobby, char *envp[]);
+int server_sender(int socket, char *buffer, void *addr, char flag);
 
 
 /* UTILS */

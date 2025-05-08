@@ -3,153 +3,147 @@
 /*                                                        :::      ::::::::   */
 /*   server_reciever.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 23:48:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:11:11 by topiana-         ###   ########.fr       */
+/*   Created: 2025/05/08 21:42:13 by totommi           #+#    #+#             */
+/*   Updated: 2025/05/09 01:29:58 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "kill_the_host.h"
 #include "server.h"
+#include <pthread.h>
 
-static int	handshake(int connfd, t_player *lobby)
+int	server_reciever(int servfd, t_player *lobby);
+
+/* 0 error, 1 ok */ /* rn no selective ban on sussy behaviour */
+int	who_is_there(int socket, t_player *lobby, struct sockaddr_in *addr, char *buffer)
 {
-	char	buffer[MAXLINE];
+	struct sockaddr_in	*personal;
+	char				bluffer[MAXLINE + 1];
 
-	ft_memset(buffer, 0, sizeof(buffer));
-	if (recv(connfd, buffer, MAXLINE, 0) < 0)
+	// checking for corrupted message
+	if (parse_msg_string(buffer) <= 0)
 	{
-		ft_perror(ERROR"recv failure"RESET);
-		return (0);
-	}
-	
-	ft_printf(YELLOW"[handshake] recv '%s' from client%s\n", buffer, RESET);
-
-	if (!cycle_player_msgs(buffer, lobby))
-	{
-		ft_perror(ERROR"corrupted message"RESET);
+		ft_printfd(STDERR_FILENO, ERROR"ack failed:%s currupted message\n", RESET);
 		return (0);
 	}
 
-	// telling the lobby the new player is here
-	if (server_sender(lobby, buffer, ft_strlen(buffer)) < 0)
+	// changing addr port and sending it to the new player
+	buffer_lobby_action(lobby, "new", bluffer);
+	addr->sin_port = htons ( PORT_2 );
+	if (server_sender(socket, bluffer, addr, 1) < 0)
 		return (0);
 
-	// telling the player were the lobby is
-	buffer_lobby_action(lobby, "new", buffer);
-
-	ft_printf(YELLOW"[handshake] send '%s' to client%s\n", buffer, RESET);
-
-	if (send(connfd, buffer, MAXLINE, 0) < 0)
+	// storing addr in dynamic sockaddr
+	personal = malloc(sizeof(struct sockaddr_in));
+	if (personal == 0)
 	{
-		ft_perror(ERROR"send failure"RESET);
+		ft_perror(ERROR"malloc failure"RESET);
 		return (0);
 	}
+	ft_memcpy(personal, addr, sizeof(struct sockaddr_in));
+
+	// adding new player to database
+	if (one_player_action(buffer, lobby, personal) <= 0)
+	{
+		ft_perror(ERROR"lobby failure"RESET);
+		return (free(personal), 0);
+	}
+	// sending the update to the rest of the lobby
+	if (server_sender(socket, buffer, personal, 1) < 0)
+		return (free(personal), 0);
 	return (1);
 }
 
-/* passed the wrapper to the precise element of the array of wrappers */
-static void	*private_reciever(void *arg)
+/* checks weather the address is already in the lobby */
+int	addr_in_lobby(t_player *lobby, struct sockaddr_in *addr)
 {
-	t_player *const				lobby = lbb_get_ptr(NULL);
-	char						buffer[MAXLINE];
-	int							connfd;
-	size_t						len;
+	int	i;
 
-	connfd = *(int *)arg;
-	if (!handshake(connfd, lobby))
-		return (close(connfd), NULL);
-	ft_printf(LOG">handshake completed successuflly%s\n", RESET);
+	i = 1;
+	while (i < MAXPLAYERS)
+	{
+		if (lbb_is_alive(lobby[i])
+			&& !ft_memcmp(lobby[i].online, addr,
+					sizeof(struct sockaddr_in)))
+			{
+				return (1);
+			}
+		i++;
+	}
+	return (0);
+}
+
+/* This is awesome.
+Need more parsing on what was sent?
+	--> parse_msg_string()
+Need different handshake provedure?
+	--> who_is_there()
+Need new msg interpretation?
+	--> one_player_action() */
+static void	*reciever(void *arg)
+{
+	t_player *const		lobby = lbb_get_ptr(NULL);
+	char				buffer[MAXLINE + 1];
+	struct sockaddr_in	addr;
+	socklen_t			len;
+	int					socket;
+
+	socket = *(int *)arg;
+	ft_printf(LOG">recieving on socket %d%s\n", socket, RESET);
 	while (!0)
 	{
-		if (!lbb_is_alive(lobby[HOST]))	// temporary way of clean kill
-		{
-			ft_printfd(STDERR_FILENO, HOSTLOG"host died%s\n", RESET);
-			break ;
-		}
 		ft_memset(buffer, 0, sizeof(buffer));
-		if ((len = recv(connfd, buffer, MAXLINE, 0)) < 0)
+		if (recvfrom(socket, buffer, MAXLINE, 0, (struct sockaddr *)&addr, &len) < 0)
 		{
-			ft_perror(ERROR"recv failure"RESET);
-			break ;
+			ft_perror(ERROR"recvfrom failed"RESET);
+			break;
 		}
-		ft_printf(YELLOW"%d bytes: '%s' from Client\n"RESET, len, buffer);
-		if (!cycle_player_msgs(buffer, lobby))
+		if (parse_msg_string(buffer) <= 0)
+		{
+			ft_printfd(STDERR_FILENO, WARN"corrupted buffer:%s '%s'\n", RESET, buffer);
+			continue ;
+		}
+		ft_printf(YELLOW"%d bytes: '%s' from Client\n"RESET, ft_strlen(buffer), buffer);
+		if (ft_strnstr(buffer, ":new", sizeof(buffer))
+			&& !addr_in_lobby(lobby, &addr)
+			&& who_is_there(socket, lobby, &addr, buffer))
+			ft_printf(CONNECT"'%z' joined the lobby%s\n", buffer, msg_name_length(buffer), RESET);
+		else if (!cycle_player_msgs(buffer, lobby))
 		{
 			ft_perror(ERROR"handler failure"RESET);
 			break ;
 		}
-		// chaos
-		// ft_printf(BLUE"== = = == == =\n");
-		// print_quick_lobby(lobby);
-		// ft_printf(RESET);
-		if (server_sender(lobby, buffer, ft_strlen(buffer) * sizeof(char)) < 0)
-			break ;
 	}
-	// client:10.12.2.7:1_1_1::update
-	ft_printf(LOG"private listener shutting down\n"RESET);
-	return (close(connfd), NULL);
+	return (close(socket), NULL);
 }
+// if (handle_client_players(buffer, recenv) < 0)
+// {
+// 	ft_printf(HOSTLOG"A NEW HOST WILL RISE%s\n", RESET);
+// 	return (close(recenv->player[0].socket), free(recenv), NULL);
+// }
 
-static void	*reciever(void *arg)
-{
-	t_player *const		lobby = lbb_get_ptr(NULL);
-	t_wrapper			*wrapper;
-	int					listfd;
-	// int					connfd;
-	// int					slot;
-
-	// ft_printf(LOG">reciever is starting...%s\n", RESET);
-	listfd = *(int *)arg;
-	if (lobby == NULL)
-	{
-		ft_printfd(STDERR_FILENO, ERROR"server reciever:%s lobby not initialized\n", RESET);
-		return (NULL);
-	}
-	while (!0)
-	{
-		while (lbb_player_count() >= MAXPLAYERS)
-			usleep(10000);
-		if (!lbb_is_alive(lobby[HOST]))	// temporary way of clean kill
-		{
-			ft_printfd(STDERR_FILENO, HOSTLOG"host died%s\n", RESET);
-			break ;
-		}
-		wrapper = lobby[lbb_next_free_slot()].online;
-		ft_printf(LISTEN">listening on %d...%s\n", listfd, RESET);
-		wrapper->socket = accept(listfd, NULL, NULL);	// we can get info on the dude without the NULLS
-		if (wrapper->socket < 0)
-		{
-			ft_perror(ERROR"accept failed"RESET);
-			return(close(listfd), NULL);
-		}
-		else
-			ft_printf(CONNECT"connection accepted!%s\n", RESET);
-		if (pthread_create(&wrapper->tid, NULL, &private_reciever, &wrapper->socket) < 0)
-			ft_perror(ERROR"reciever launch failed"RESET);
-		pthread_detach(wrapper->tid);
-	}
-	ft_printf(LOG"server shutting down\n"RESET);
-	return(close(listfd), NULL);
-}
-
-/* Spawns a thread that listen to clients that want to connect */
-/* sockets is a pointer to MAXPLAYERS ints where sockets will be stored */
-pthread_t	server_reciever(int listfd, t_player *lobby)
+/* Spawns a thread that listen to the everyone
+and handles new connections. */
+int	server_reciever(int socket, t_player *lobby)
 {
 	pthread_t	tid;
+	int			code;
 
 	(void)lobby;	// <-- this is sad
-	if (listfd != *(int *)(lobby->online))
-	{
-		ft_printfd(STDERR_FILENO, ERROR"reciever failure:%s socket corrupted", RESET);
-		return (0);
-	}
-	if (pthread_create(&tid, NULL, &reciever, lobby->online) < 0)
+	if (pthread_create(&tid, NULL, &reciever, &socket) < 0)
 	{
 		ft_perror(ERROR"reciever launch failed"RESET);
-		return (0);
+		return (-1);
 	}
-	return (tid);
+	code = pthread_detach(tid);
+	// might need usleep
+	sleep(1);
+	if (code != 0)
+	{
+		ft_printfd(STDERR_FILENO, ERROR"detach failure:%s code %d\n", RESET, code);
+		return (-1);
+	}
+	return (0);
 }

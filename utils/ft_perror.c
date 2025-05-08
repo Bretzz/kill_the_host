@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:23:28 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 01:40:21 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/08 22:10:46 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static char	*ft_strerror(int code)
 {
 	if (code == 256)
 		return ("corrrupted message");
-	else if (code == 256)
+	else if (code == 257)
 		return ("lobby not initialized");
 	else
 		return (strerror(errno));

@@ -3,89 +3,85 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:34:21 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 14:56:25 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 00:13:56 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "kill_the_host.h"
 #include "server.h"
 
-/* Spawns a 'listener-thread' that listen for connect call
-from other ips, if one si accept(3)'d spawn another thread
-that listen on that one. All the 'personal listeners' thread
-are detached. The listener's pid is returned
+/* This will be the last thing a secondarry thread will do.
+Either the game is over or the host dies. no in between. */
+
+/* So 1 socket bound for INADDR_ANY is all we need. */
+
+/* 
+	struct sockaddr_in serveraddr;
+    memset( &serveraddr, 0, sizeof(serveraddr) );
+    serveraddr.sin_family = AF_INET;
+    serveraddr.sin_port = htons( 50037 );
+    serveraddr.sin_addr.s_addr = htonl( INADDR_ANY );
+*/
+
+/* The thread can be detatched, no biggie. */
+
+/* The socket must be usable from the 'minigame'.
+(socket + mutex bonus package) */
+
+/* Binds a socket to INADDR_ANY and returns it.
 -1 on error */
-
-/* binds a socket to MYPORT and starts listening to it.
-RETURNS: the socket to listen from, -1 on error. */
-static int	open_the_ears(void)
+int	bind_to_world(void)
 {
-	struct	sockaddr_in serveraddr;
-	int 	listfd;
+	struct sockaddr_in	anyaddr;
+	int					fd;
 
-	if ((listfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	fd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (fd < 0)
 	{
 		ft_perror(ERROR"socket failure"RESET);
 		return (-1);
 	}
-	ft_memset(&serveraddr, 0, sizeof(struct sockaddr_in));
-	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_port = htons ( MYPORT );
-	serveraddr.sin_addr.s_addr = htonl( INADDR_ANY );
-	if (bind(listfd, (struct sockaddr *)&serveraddr, sizeof(struct sockaddr_in)))
+	ft_memset(&anyaddr, 0, sizeof(anyaddr));
+    anyaddr.sin_family = AF_INET;
+    anyaddr.sin_port = htons( PORT_1 );
+    anyaddr.sin_addr.s_addr = htonl( INADDR_ANY );
+	if (bind(fd, (struct sockaddr *)&anyaddr, sizeof(struct sockaddr)) < 0)
 	{
 		ft_perror(ERROR"bind failure"RESET);
 		return (-1);
 	}
-	if (listen(listfd, MAXPLAYERS))
-	{
-		ft_perror(ERROR"listen failure"RESET);
-		return (-1);
-	}
-	return (listfd);
+	return (fd);
 }
 
-static int	my_data_init(t_player *lobby, char *env[])
+/* 0 error, 1 all good */
+int	my_data_init(t_player *lobby, char *envp[])
 {
-	unsigned int	i;
-
 	if (lobby == NULL)
 		return (0);
-	ft_strlcpy(lobby[HOST].name, get_my_name(env), 43);
-	ft_strlcpy(lobby[HOST].ip, get_locl_ip(env), 16);
-	i = 0;
-	while (i < MAXPLAYERS)
-	{
-		lobby[i].online = (t_wrapper *)malloc(sizeof(t_wrapper));
-		if (lobby[i].online == NULL)
-			return (0);
-		ft_memset(lobby[i].online, 0, sizeof(t_wrapper));
-		i++;
-	}
+	ft_strlcpy(lobby[HOST].name, get_my_name(envp), 43);
+	ft_strlcpy(lobby[HOST].ip, get_locl_ip(envp), 16);
 	print_lobby(lobby);
 	ft_printf("== = == === = PLAYER COUNT: %u == = == === = \n", lbb_player_count());
 	return (1);
 }
 
-/* each player has his 'online' pointer assigned.
-RETURNS: the tid' of the listener-thred, 0 on error */
-pthread_t	server_routine(t_player *lobby, char *env[])
+/* Retutns the socket to talk to */
+int	server_routine(t_player *lobby, char *envp[])
 {
-	t_wrapper	*host;
+	int			socket;
 
-	if (!my_data_init(lobby, env))
-		return ((pthread_t)0);
-	host = lobby->online;	// wrapper of the player[0]
-	host->socket = open_the_ears();
-	if (host->socket < 0)
-		return ((pthread_t)0);
-	ft_printf(LOG">starting server on %d%s\n", host->socket, RESET);
-	host->tid = server_reciever(host->socket, lobby);
-	if (host->tid == 0)
-		return (close(host->socket), (pthread_t)0);
-	ft_printf(LOG">server started on tid: %u%s\n", host->tid, RESET);
-	return (host->tid);
+	if (!my_data_init(lobby, envp))
+		return (-1);
+	socket = bind_to_world();
+	// ft_printf(LOG">bound socket to %d%s\n", socket, RESET);
+	if (socket < 0)
+		return (-1);
+	if (server_reciever(socket, lobby) < 0)
+		return (close(socket), -1);
+	return (socket);
+	// start server_reciever
+	// define server_sender (only way of sending messages) !!! NEED MUTEX !!!
 }

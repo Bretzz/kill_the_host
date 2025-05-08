@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   msg_handler.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:31:36 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 22:32:39 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 23:47:14 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 #include <errno.h>
 
 int	parse_msg_string(const char *msg);
-int	one_player_action(const char *msg, t_player *lobby);
-int	cycle_player_msgs(char *msg, t_player *lobby);
+int	one_player_action(const char *msg, t_player *lobby, void *online);
+int	cycle_player_msgs(char *msg, t_player *print_lobby);
 
 /* checks weather msg is a valid string and checks the
 action to be performed.
@@ -46,12 +46,12 @@ int	parse_msg_string(const char *msg)
 	return (0);
 }
 
-int	one_player_action(const char *msg, t_player *lobby)
+int	one_player_action(const char *msg, t_player *lobby, void *online)
 {
 	const int	action = parse_msg_string(msg);
 
 	ft_printf(LOG"action value %d%s\n", action, RESET);
-	if (action < 0)
+	if (action <= 0)
 		errno = 256;
 	else if (lobby == NULL)
 	{
@@ -59,9 +59,9 @@ int	one_player_action(const char *msg, t_player *lobby)
 		return (0);
 	}
 	else if (action == 1)
-		new_player(msg, lobby);
+		new_player(msg, lobby, online);
 	else if (action == 2)
-		lbb_update_player(msg);
+		update_player(msg, lobby, online);
 	else if (action == 3)
 		lbb_kill_player(msg);
 	else if (action == 4)
@@ -83,13 +83,13 @@ int	cycle_player_msgs(char *msg, t_player *lobby)
 		if (msg[i] == '\n')
 		{
 			msg[i] = '\0';
-			if (one_player_action(&msg[last], lobby) <= 0)
+			if (one_player_action(&msg[last], lobby, NULL) <= 0)
 				return (0);
 			last = i + 1;
 		}
 		i++;
 	}
-	if (one_player_action(&msg[last], lobby) <= 0)
+	if (one_player_action(&msg[last], lobby, NULL) <= 0)
 		return (0);
 	return (1);
 }

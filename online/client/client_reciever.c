@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:33:11 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 02:05:21 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 01:22:33 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "client.h"
 #include <pthread.h>
 
-pthread_t	client_reciever(int servfd, t_player *lobby);
+int	client_reciever(int servfd, t_player *lobby);
 
 static void	*reciever(void *arg)
 {
@@ -23,26 +23,21 @@ static void	*reciever(void *arg)
 	size_t			len;
 	int				servfd;
 
-	ft_memcpy(&servfd, &arg, sizeof(int));
+	servfd = *(int *)arg;
 	ft_printf(LOG">recieving on socket %d%s\n", servfd, RESET);
 	while (!0)
 	{
-		if (!lbb_is_alive(lobby[HOST]))	// temporary way of clean kill
-		{
-			ft_printfd(STDERR_FILENO, HOSTLOG"host died%s\n", RESET);
-			break ;
-		}
 		ft_memset(buffer, 0, sizeof(buffer));
 		// ft_printf("talk to me...\n");
-		len = recv(servfd, buffer, MAXLINE, 0);
+		len = recvfrom(servfd, buffer, MAXLINE, 0, NULL, 0);
 		if ( len < 0 ) {
-			ft_perror(ERROR"recv failed"RESET);
+			ft_perror(ERROR"recvfrom failed"RESET);
 			break;
 		}
-		if (buffer[0] == '\0')	// really ugly
+		if (parse_msg_string(buffer) <= 0)	// really ugly
 		{
-			ft_printfd(STDERR_FILENO, RED"empty byte recieved\n"RESET);
-			continue ;
+			ft_printfd(STDERR_FILENO, WARN"corrupted buffer:%s '%s'\n", RESET, buffer);
+			break ;
 		}
 		ft_printf(YELLOW"%d bytes: '%s' from Server\n"RESET, len, buffer);
 		if (!cycle_player_msgs(buffer, lobby))
@@ -65,21 +60,24 @@ static void	*reciever(void *arg)
 // }
 
 /* Spawns a thread that listen to the server for updates on the players */
-pthread_t	client_reciever(int servfd, t_player *lobby)
+int	client_reciever(int servfd, t_player *lobby)
 {
 	pthread_t	tid;
+	int			code;
 
 	(void)lobby;	// <-- this is sad
-	if (ft_memcmp(&servfd, &lobby->online, sizeof(int)))
-	{
-		ft_printfd(STDERR_FILENO, ERROR"reciever failure:%s socket corrupted", RESET);
-		return ((pthread_t)0);
-	}
-	if (pthread_create(&tid, NULL, &reciever, lobby->online) < 0)
+	if (pthread_create(&tid, NULL, &reciever, &servfd) < 0)
 	{
 		ft_perror(ERROR"reciever launch failed"RESET);
-		return ((pthread_t)0);
+		return (-1);
 	}
-	// pthread_detach(tid);
-	return (tid);
+	code = pthread_detach(tid);
+	// might need usleep
+	sleep(1);
+	if (code != 0)
+	{
+		ft_printfd(STDERR_FILENO, ERROR"detach failure:%s code %d\n", RESET, code);
+		return (-1);
+	}
+	return (0);
 }

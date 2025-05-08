@@ -65,12 +65,12 @@ SRC_FILES		= main.c \
 				\
 				msg_utils.c \
 				\
-				client.c client_udp.c \
-				client_reciever.c client_udp_reciever.c \
+				client.c \
+				client_reciever.c \
 				client_sender.c \
 				\
-				server.c server_udp.c \
-				server_reciever.c server_udp_reciever.c \
+				server.c\
+				server_reciever.c \
 				server_sender.c \
 				\
 				actions.c buffer_actions.c \

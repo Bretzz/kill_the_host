@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minigame.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 14:21:27 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 01:34:28 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ typedef struct s_mlx
 	t_img			img;
 	t_player		*lobby;
 	int				*index;
+	int				socket;
 }				t_mlx;
 
 int		handle_heypress(int keysym, t_mlx *mlx);
@@ -86,7 +87,7 @@ void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color);
 int		put_line(t_mlx *mlx, int *p, int *t, int *my_pos, unsigned int color);
 void	put_square(void *my_struct, int x, int y, float z, unsigned int color);
 
-void	send_all(t_mlx *mlx, const char *msg, size_t msg_size);
+void	send_all(t_mlx *mlx, char *msg, size_t msg_size);
 
 int 	clean_exit(t_mlx *mlx);
 

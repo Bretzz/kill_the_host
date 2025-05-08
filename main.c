@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:42:19 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/08 15:23:35 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 23:04:59 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,30 +95,29 @@ int	main(int argc, char *argv[], char *env[])
 	// ft_printf("== = == === = PLAYER COUNT: %u == = == === = \n", lbb_player_count());
 	//ft_printf("name='%s'\nip='%s'\npos=%d_%d_%d\n", lobby[0].name, lobby[0].ip, lobby[0].pos[0], lobby[0].pos[1], lobby[0].pos[2]);
 	ft_printf(LOG"THIS THING CRASHES: right now each player has his online stuff in 'server' mode but the message aren't beingn rebound to anyone, so it's useless, he just listens.\nthe client is almost done, we need the send-message part then, thhe ones that qquits cleanly on host's death (also for server), then all good%s\n", RESET);
-	pthread_t	listid;
-	pthread_t	servtid;
+	int			socket;
 
 	// #include <signal.h>
 	// sigaction(SIGUSR1, NULL, NULL);
 
 	if (!ft_strcmp("host", get_serv_ip(env)))
 	{
-		listid = server_udp_routine(lobby, env);
-		if (listid == 0)
+		socket = server_routine(lobby, env);
+		if (socket < 0)
 		{
 			lbb_delete_lobby((lbb_get_ptr(NULL)));
 			return (1);
 		}
 		usleep(1000);
 		index = 0;
-		minigame(&index, lobby);
-		pthread_join(listid, NULL);
+		minigame(&index, socket);
+		// pthread_join(listid, NULL);
 		print_lobby(lobby);
 	}
 	else
 	{
-		servtid = client_udp_routine(lobby, env);
-		if (servtid == 0)
+		socket = client_routine(lobby, env);
+		if (socket < 0)
 		{
 			lbb_delete_lobby((lbb_get_ptr(NULL)));
 			return (1);
@@ -135,8 +134,8 @@ int	main(int argc, char *argv[], char *env[])
 		// }
 		usleep(1000);
 		index = 1;
-		minigame(&index, lobby);
-		pthread_join(servtid, NULL);
+		minigame(&index, socket);
+		// pthread_join(servtid, NULL);
 		print_lobby(lobby);
 		
 	}

@@ -3,41 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   server_sender.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/07 11:45:40 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 15:07:42 by topiana-         ###   ########.fr       */
+/*   Created: 2025/05/08 22:14:57 by totommi           #+#    #+#             */
+/*   Updated: 2025/05/09 01:36:22 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "kill_the_host.h"
 #include "server.h"
 
-/* -1 error, 0 ok */
-/* sends the string to all the clients, if the string is a msg-string
-the player with same signature (name:ip) as the first msg will
-be avoided. */
-int	server_sender(t_player *lobby, void *buffer, size_t size)
+static void	staitc_mutex_init(pthread_mutex_t *mutex)
 {
-	const int		sender_slot = lbb_get_index(buffer);
-	t_wrapper		*wrapper;
-	int				i;
+	pthread_mutex_t	dead;
 
-	ft_printf(GREEN"sending '%s' to Clients (from: %s)%s\n", buffer, lobby[sender_slot].name, RESET);
-	return (0);
+	ft_memset(&dead, 0, sizeof(pthread_mutex_t));
+	if (!ft_memcmp(mutex, &dead, sizeof(pthread_mutex_t)))
+		pthread_mutex_init(mutex, NULL);
+}
+
+/* -1 error, 0 ok */
+/* socket and message to send, if flag == 1 send to addr,
+if flag == 0 send to everyone BUT addr. */
+/* NOTE: case addr = NULL:
+	flag 1, error,
+	flag 0, send to all.  */
+int server_sender(int socket, char *buffer, void *addr, char flag)
+{
+	t_player *const			lobby = lbb_get_ptr(NULL);
+	static pthread_mutex_t	mutex;
+	int						i;
+
+	ft_printf(YELLOW"sending '%s'%s\n", (char *)buffer, RESET);
+	staitc_mutex_init(&mutex);
+	if (flag == 1)
+	{
+		pthread_mutex_lock(&mutex);
+		if (sendto(socket, buffer, ft_strlen(buffer), 0, addr, sizeof(struct sockaddr)) < 0)
+		{
+			ft_perror(ERROR"sendto failure"RESET);
+			return (pthread_mutex_unlock(&mutex), -1);
+		}
+		return (pthread_mutex_unlock(&mutex), 0);
+	}
+	if (flag == 0 && lobby == NULL)
+	{
+		ft_printfd(STDERR_FILENO, ERROR"sender failure:%s lobby not initialized\n", RESET);
+		return (-1);
+	}
 	i = 1;
+	pthread_mutex_lock(&mutex);
 	while (i < MAXPLAYERS)
 	{
-		wrapper = lobby[i].online;
-		if (lbb_is_alive(lobby[i]) && i != sender_slot)
+		if (lbb_is_alive(lobby[i]) && (!addr || ft_memcmp(lobby[i].online, addr, sizeof(struct sockaddr_in)))
+			&& sendto(socket, buffer, ft_strlen(buffer), 0, lobby[i].online, sizeof(struct sockaddr)) < 0)
 		{
-			if (send(wrapper->socket, buffer, size, 0) < 0)
-			{
-				ft_perror(ERROR"send failure"RESET);
-				return (-1);
-			}
+			ft_perror(ERROR"sendto failure"RESET);
+			return (pthread_mutex_unlock(&mutex), -1);
 		}
 		i++;
 	}
-	return (0);
+	return (pthread_mutex_unlock(&mutex), 0);
 }
