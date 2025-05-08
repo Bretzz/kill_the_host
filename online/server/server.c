@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:34:21 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 17:44:30 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 02:06:05 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,15 +77,15 @@ pthread_t	server_routine(t_player *lobby, char *env[])
 	t_wrapper	*host;
 
 	if (!my_data_init(lobby, env))
-		return (0);
+		return ((pthread_t)0);
 	host = lobby->online;	// wrapper of the player[0]
 	host->socket = open_the_ears();
 	if (host->socket < 0)
-		return (0);
+		return ((pthread_t)0);
 	ft_printf(LOG">starting server on %d%s\n", host->socket, RESET);
 	host->tid = server_reciever(host->socket, lobby);
 	if (host->tid == 0)
-		return (close(host->socket), 0);
+		return (close(host->socket), (pthread_t)0);
 	ft_printf(LOG">server started on tid: %u%s\n", host->tid, RESET);
 	return (host->tid);
 }

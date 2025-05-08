@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:02:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 23:03:29 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 02:01:09 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,29 +93,29 @@ to join before exit.
 NOTE: the socket is stored in *(int *)lobby->online */
 pthread_t	client_routine(t_player *lobby, char *env[])
 {
-	int	servfd;
-	int	servtid;
+	pthread_t	servtid;
+	int			servfd;
 
 	if (!ft_strcmp("ip-not-found", get_serv_ip(env)))
 	{
 		ft_printfd(STDERR_FILENO, ERROR"missing server ip:%s env variable not found\n", RESET);
-		return (0);
+		return ((pthread_t)0);
 	}
 	if (!my_data_init(lobby, env))
-		return (0);
+		return ((pthread_t)0);
 	ft_printf(LOG">data init ok...%s\n", RESET);
 	servfd = connect_to_server(get_serv_ip(env));
 	if (servfd < 0)
-		return (0);
+		return ((pthread_t)0);
 	ft_printf(LOG">testing connection...%s\n", RESET);
 	if (test_connection(servfd, lobby) < 0)
-		return (close(servfd), 0);
+		return (close(servfd), (pthread_t)0);
 	ft_printf(LOG">connection approved...%s\n", RESET);
 	print_lobby(lobby);
 	ft_memcpy(&lobby->online, &servfd, sizeof(int));
 	servtid = client_reciever(servfd, lobby);
 	if (servtid == 0)
-		return (close(servfd), 0);
+		return (close(servfd), (pthread_t)0);
 	// ft_printf(LOG">reciever started%s\n", RESET);
 	// ft_printf(LOG">client started on tid: %u%s\n", servtid, RESET);
 	return (servtid);

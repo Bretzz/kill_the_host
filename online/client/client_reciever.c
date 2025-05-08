@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client_reciever.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:33:11 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 23:17:18 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 02:05:21 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "client.h"
 #include <pthread.h>
 
-int	client_reciever(int servfd, t_player *lobby);
+pthread_t	client_reciever(int servfd, t_player *lobby);
 
 static void	*reciever(void *arg)
 {
@@ -65,7 +65,7 @@ static void	*reciever(void *arg)
 // }
 
 /* Spawns a thread that listen to the server for updates on the players */
-int	client_reciever(int servfd, t_player *lobby)
+pthread_t	client_reciever(int servfd, t_player *lobby)
 {
 	pthread_t	tid;
 
@@ -73,12 +73,12 @@ int	client_reciever(int servfd, t_player *lobby)
 	if (ft_memcmp(&servfd, &lobby->online, sizeof(int)))
 	{
 		ft_printfd(STDERR_FILENO, ERROR"reciever failure:%s socket corrupted", RESET);
-		return (0);
+		return ((pthread_t)0);
 	}
 	if (pthread_create(&tid, NULL, &reciever, lobby->online) < 0)
 	{
 		ft_perror(ERROR"reciever launch failed"RESET);
-		return (0);
+		return ((pthread_t)0);
 	}
 	// pthread_detach(tid);
 	return (tid);

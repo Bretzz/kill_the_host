@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 23:44:58 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/07 02:36:02 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/08 02:40:17 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ size_t	lbb_player_count(void);
 
 int		lbb_add_player(const char *msg);
 int		lbb_update_player(const char *msg);
-void	lbb_kill_player(const char *msg);
+void	*lbb_kill_player(const char *msg);
 void	*lbb_move_player(int src, int dest);
 void	lbb_push_up(void);
 

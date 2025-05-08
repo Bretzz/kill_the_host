@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:42:19 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/08 00:00:36 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 02:10:10 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,9 @@
 
 int	main(int argc, char *argv[], char *env[])
 {
-	t_player	*lobby;
-	int			index;
+	const unsigned char	small = 0x7f;
+	t_player			*lobby;
+	int					index;
 	//char		pos_tar[30];
 	// char		name[43];
 	// char		ip[16];
@@ -50,9 +51,11 @@ int	main(int argc, char *argv[], char *env[])
 	(void)argc; (void)argv; (void)env;
 	// if (argc < 2)
 	// 	return (1);
-	if (lbb_init() == NULL)
+	if (lbb_init((void *)&small) == NULL)
 		return (1);
+	ft_printf("lobby initialized\n");
 	lobby = lbb_get_ptr(NULL);
+	ft_printf("1\n");
 	print_lobby(lobby);
 	ft_printf("== = == === = PLAYER COUNT: %u == = == === = \n", lbb_player_count());
 	
@@ -96,8 +99,8 @@ int	main(int argc, char *argv[], char *env[])
 	pthread_t	listid;
 	pthread_t	servtid;
 
-	#include <signal.h>
-	sigaction(SIGUSR1, NULL, NULL);
+	// #include <signal.h>
+	// sigaction(SIGUSR1, NULL, NULL);
 
 	if (!ft_strcmp("host", get_serv_ip(env)))
 	{

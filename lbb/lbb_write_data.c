@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lbb_write_data.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:16:46 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/07 23:46:36 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 02:22:59 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int		lbb_add_player(const char *msg);
 int		lbb_update_player(const char *msg);
-void	lbb_kill_player(const char *msg);
+void	*lbb_kill_player(const char *msg);
 void	*lbb_move_player(int src, int dest);
 void	lbb_push_up(void);
 
@@ -59,16 +59,28 @@ int	lbb_update_player(const char *msg)
 	return (1);
 }
 
-void	lbb_kill_player(const char *msg)
+/* clears the struct's bytes.
+You can pass a pointer to an escape (0x7f) char
+to set the treshold of the smallest to free.
+ALSO returns said pointer if NULL is passed. */
+void	*lbb_kill_player(const char *msg)
 {
 	t_player *const	lobby = lbb_get_ptr(NULL);
 	int				index;
+	static void		*small;
 
+	if (msg == NULL)
+		return (small);
+	if (*msg == 0x7f)
+		small = (void*)msg;
 	index = lbb_get_index(msg);
 	if (index < 0)
-		return ;
+		return (NULL);
 	ft_printf("killing %s\n", lobby[index].name);
+	if (lobby[index].online > small)
+		free(lobby[index].online);
 	ft_memset(&lobby[index], 0, sizeof(t_player));
+	return (NULL);
 }
 
 /* moves the player at the index 'src' to the index 'dest'.

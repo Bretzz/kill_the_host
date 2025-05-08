@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minigame.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 00:13:44 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 01:46:30 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int clean_exit(t_mlx *mlx)
 	sleep(1);
 	lbb_kill_player(buffer);	// gets the thread out of the loop
 	mlx_destroy_window(mlx->mlx, mlx->win);
-	mlx_destroy_display(mlx->mlx);
+	// mlx_destroy_display(mlx->mlx);
 	print_lobby(mlx->lobby);
 	lbb_delete_lobby((lbb_get_ptr(NULL)));
 	free(mlx->mlx);
