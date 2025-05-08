@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 20:51:32 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 22:57:51 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 15:18:07 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,15 @@ int	minigame(int *index, t_player *lobby);
 /* CLIENT */
 
 pthread_t	client_routine(t_player *lobby, char *env[]);
+pthread_t	client_udp_routine(t_player *lobby, char *env[]);
 int	client_sender(int servfd, void *buffer, size_t size);
 
 /* SERVER */
 
 pthread_t	server_routine(t_player *lobby, char *env[]);
+pthread_t	server_udp_routine(t_player *lobby, char *env[]);
 int	server_sender(t_player *lobby, void *buffer, size_t size);
+
 
 /* UTILS */
 

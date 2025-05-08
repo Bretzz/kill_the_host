@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:35:15 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 12:32:23 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 15:17:42 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct s_wrapper
 }				t_wrapper;
 
 pthread_t	server_reciever(int listfd, t_player *lobby);
+pthread_t	server_udp_reciever(int listfd, t_player *lobby);
 
 int			server_sender(t_player *lobby, void *buffer, size_t size);
 

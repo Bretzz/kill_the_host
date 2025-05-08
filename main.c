@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:42:19 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/08 13:37:47 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 15:23:35 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int	main(int argc, char *argv[], char *env[])
 
 	if (!ft_strcmp("host", get_serv_ip(env)))
 	{
-		listid = server_routine(lobby, env);
+		listid = server_udp_routine(lobby, env);
 		if (listid == 0)
 		{
 			lbb_delete_lobby((lbb_get_ptr(NULL)));
@@ -117,7 +117,7 @@ int	main(int argc, char *argv[], char *env[])
 	}
 	else
 	{
-		servtid = client_routine(lobby, env);
+		servtid = client_udp_routine(lobby, env);
 		if (servtid == 0)
 		{
 			lbb_delete_lobby((lbb_get_ptr(NULL)));

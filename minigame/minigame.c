@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 14:21:37 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 15:17:13 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void	send_all(t_mlx *mlx, const char *msg, size_t msg_size)
 	int	i;
 	int	socket;
 
+	return ;
 	ft_printf(GREEN"sending: %s\n"RESET, msg);
 	if (*mlx->index == PLAYER) //sendto host (ClientUDP)
 	{

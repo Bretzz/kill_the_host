@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:03:05 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 02:05:41 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/08 15:17:32 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ that every thread can exit cleanly.*/
 # include "../online.h"
 
 pthread_t	client_reciever(int servfd, t_player *lobby);
+pthread_t	client_udp_reciever(int servfd, t_player *lobby);
 
 int			client_sender(int servfd, void *buffer, size_t size);
 

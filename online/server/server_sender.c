@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 11:45:40 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 23:23:19 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/08 15:07:42 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	server_sender(t_player *lobby, void *buffer, size_t size)
 	int				i;
 
 	ft_printf(GREEN"sending '%s' to Clients (from: %s)%s\n", buffer, lobby[sender_slot].name, RESET);
+	return (0);
 	i = 1;
 	while (i < MAXPLAYERS)
 	{
