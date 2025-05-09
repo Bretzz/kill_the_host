@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:35:27 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 17:36:42 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:41:21 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,12 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 	mlx = (t_mlx *)arg;
 	if (keysym == XK_Escape || keysym == 53)
 	{
-		buffer_player_action(mlx->lobby[lbb_next_free_slot() - 1], "host", buffer);
+		if (*mlx->index == HOST)
+		{
+			buffer_player_action(mlx->lobby[lbb_next_free_slot() - 1], "host", buffer);
+			send_all(mlx, buffer, ft_strlen(buffer), 0);
+		}
 		// ft_printf("buffer is '%s'\n", buffer);
-		send_all(mlx, buffer, ft_strlen(buffer), 0);
 		clean_exit(mlx);
 	}
 	else if (keysym == XK_KP_Space || keysym == 49 || keysym == 32)
