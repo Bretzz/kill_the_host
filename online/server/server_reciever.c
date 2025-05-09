@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 21:42:13 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/09 14:40:33 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 15:52:01 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	who_is_there(int socket, t_player *lobby, struct sockaddr_in *addr, char *bu
 
 	// changing addr port and sending it to the new player
 	buffer_lobby_action(lobby, "new", bluffer);
-	addr->sin_port = htons ( PORT_2 );
+	// addr->sin_port = htons ( PORT_2 );
 
 	ft_printf(PURPLE"sending ack '%s' to %s%s\n", bluffer, "<new-client>", RESET);
 	if (server_sender(socket, bluffer, addr, 1) < 0)
