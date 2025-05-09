@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 12:15:22 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 15:24:23 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 16:20:13 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ static void	*manager(void *arg)
 		}
 		else if (*setup->index == PLAYER)
 		{
+			sleep(1);
 			ft_printf(LOG"===STARTING CLIENT===\n"RESET);
 			*setup->socket = client_routine(&tid, setup->envp);
 		}

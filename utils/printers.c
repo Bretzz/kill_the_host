@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   printers.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:31:53 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 02:48:09 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 16:27:35 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,7 @@ void	print_player(t_player player)
 		// ft_printf("%p > %p? good\n", player.online, small);
 		ft_printf("%s ", lbb_get_full_stats(player, buffer));
 		if (player.online >= small)
-			ft_printf("socket: %d", (*(int *)player.online)/* , ((int *)player.online + 1) */);
-		else
-			ft_printf("socket: %d", player.online);
+			ft_printf("online: %p", player.online)/* , ((int *)player.online + 1) */;
 		ft_printf("\n");
 	}
 }

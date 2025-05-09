@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:14:57 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/09 14:38:34 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 16:12:23 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,6 @@ int server_sender(int socket, char *buffer, void *addr, char flag)
 	if (flag == 1)
 	{
 		pthread_mutex_lock(&mutex);
-		// struct sockaddr_in	*sin = addr;
-		// unsigned char *ip = (unsigned char *)&sin->sin_addr.s_addr;
-		// 
-		// ft_printf("sending to %d.%d.%d.%d\n", ip[0], ip[1], ip[2], ip[3]); 
 		if (sendto(socket, buffer, ft_strlen(buffer), 0, addr, sizeof(struct sockaddr)) < 0)
 		{
 			ft_perror(ERROR"sendto failure"RESET);
@@ -67,6 +63,7 @@ int server_sender(int socket, char *buffer, void *addr, char flag)
 	while (i < MAXPLAYERS)
 	{
 		if (lbb_is_alive(lobby[i]) && (!addr || ft_memcmp(lobby[i].online, addr, sizeof(struct sockaddr_in)))
+			&& ft_printf("sending to %s\n", lobby[i].name)
 			&& sendto(socket, buffer, ft_strlen(buffer), 0, lobby[i].online, sizeof(struct sockaddr)) < 0)
 		{
 			ft_perror(ERROR"sendto failure"RESET);

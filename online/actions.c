@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:03:47 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 15:36:09 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 16:25:45 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,11 @@ void	new_player(const char *msg, t_player *lobby, void *online)
 	int	slot;
 
 	if (lbb_get_index(msg) >= 0)
+	{
+		if (online != NULL)
+			lobby[lbb_get_index(msg)].online = online;
 		return ;
+	}
 	slot = lbb_next_free_slot();
 	if (slot < 0)
 		return ;

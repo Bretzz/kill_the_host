@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 21:42:13 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/09 16:03:29 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 16:31:29 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	who_is_there(int socket, t_player *lobby, struct sockaddr_in *addr, char *bu
 		return (free(personal), 0);
 	}
 	// sending the update to the rest of the lobby
-	if (server_sender(socket, buffer, personal, 1) < 0)
+	if (server_sender(socket, buffer, NULL, 0) < 0)
 		return (free(personal), 0);
 	return (1);
 }
@@ -67,7 +67,7 @@ int	addr_in_lobby(t_player *lobby, struct sockaddr_in *addr)
 	i = 1;
 	while (i < MAXPLAYERS)
 	{
-		if (lbb_is_alive(lobby[i])
+		if (lbb_is_alive(lobby[i]) && lobby[i].online
 			&& !ft_memcmp(lobby[i].online, addr,
 					sizeof(struct sockaddr_in)))
 			{
@@ -120,6 +120,9 @@ static void	*reciever(void *arg)
 			ft_perror(ERROR"handler failure"RESET);
 			break ;
 		}
+		// sending the update to the rest of the lobby
+		if (server_sender(socket, buffer, NULL, 0) < 0)
+			break ;
 	}
 	return (close(socket), NULL);
 }
