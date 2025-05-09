@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 18:46:42 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 19:39:35 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include "libft.h"
 # include "lbb.h"
 
-// just for colors, ft_perror, print_quick_lobby
+// just for colors, ft_perror, print_quick_lobby handle_map
 # include "kill_the_host.h"
 
 // for msg creation
@@ -74,6 +74,8 @@ typedef struct s_mlx
 	void			*win;
 	t_img			img;
 	char			**map;
+	int				watch;		// 0/360 = north; 180 = south...
+	int				mouse[2];
 	t_player		*lobby;
 	int				*index;
 	int				*socket;

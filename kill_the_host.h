@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 20:51:32 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 12:58:20 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 19:38:25 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,10 @@
 /* GAME */
 
 int	minigame(int *index, int *socket, void *thread);
+
+/* MAP */
+
+char	**handle_map(char *s);
 
 /* CLIENT */
 

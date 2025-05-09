@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:42:19 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/09 12:56:52 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 19:02:18 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ int	main(int argc, char *argv[], char *env[])
 	// #include <signal.h>
 	// sigaction(SIGUSR1, NULL, NULL);
 
+	socket = 0;
 	if (!ft_strcmp("host", get_serv_ip(env)))
 		index = 0;
 	else

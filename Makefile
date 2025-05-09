@@ -82,6 +82,10 @@ SRC_FILES		= main.c \
 				clean_exit.c \
 				input_handling.c put_stuff.c \
 				\
+				parsing.c \
+				parsing_map_creation.c \
+				utils.c \
+				\
 				convert_stuff.c free_stuff.c \
 				ft_perror.c search_env.c \
 				libft_extension.c \
@@ -98,7 +102,7 @@ OBJS			= $(addprefix $(OBJS_DIR), $(OBJ_FILES))
 VPATH 			= $(MSG) $(LBB) \
 				online/ \
 				online/client/ online/server \
-				minigame/ \
+				minigame/ parsing \
 				utils/
 
 all: $(NAME)

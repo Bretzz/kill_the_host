@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_map_creation.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ade-ross <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 17:54:25 by ale               #+#    #+#             */
-/*   Updated: 2025/05/09 19:06:33 by ade-ross         ###   ########.fr       */
+/*   Updated: 2025/05/09 20:28:21 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,18 @@ char	*create_map_line(int fd)
 	if (!str)
 		error("malloc failed", NULL, NULL);
 	str[0] = '\0';
+	ft_printf("before gnl\n");
 	new_line = get_next_line(fd);
+	ft_printf("after gnl\n");
 	if (!new_line)
 	{
 		free(str);
 		error("no map present in file", NULL, NULL);
 	}
-	while (new_line)
+	int	i = 0;
+	while (new_line && i < 6)
 	{
+		ft_printf("line\n");
 		temp = ft_strjoin(str, new_line);
 		free(new_line);
 		free(str);
@@ -48,6 +52,7 @@ char	*create_map_line(int fd)
 			error("malloc failed in map_line creation", NULL, NULL);
 		str = temp;
 		new_line = get_next_line(fd);
+		i++;
 	}
 	return (str);
 }
@@ -82,6 +87,7 @@ char	**handle_map(char *s)
 	char	*map_line;
 	char	**map1;
 
+	ft_printf("map handler in\n");
 	if (!s)
 		error("no map path present", NULL, NULL);
 //	check_ber(s);
@@ -89,10 +95,14 @@ char	**handle_map(char *s)
 	if (fd == -1)
 		error("map file not readable or not present", NULL, NULL);
 	map_line = create_map_line(fd);
+	ft_printf("map line out\n");
 	check_all_characters_are_present(map_line);
+	ft_printf("check characters out\n");
 	map1 = create_map(map_line);
-	check_border_is_all_wall(map1, map_line);
+	// check_border_is_all_wall(map1, map_line);
+	ft_printf("check borders out\n");
 	//check_is_playable(map_line, size, data, map1); non serve perche non ci sono collectibles e exit
+	close(fd);
 	free(map_line);
 	return (map1);
 }

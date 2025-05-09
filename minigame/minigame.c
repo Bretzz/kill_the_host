@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 18:45:44 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 21:08:16 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ if we got hit by a line (even ours) we exit. */
 		color = 0xFF0000;
 	else
 		color = 0xFFFFFF;
-	put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
+	// put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
 	//my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
 	if (lobby[index].tar[0] || lobby[index].tar[1])
 	{
@@ -110,26 +110,59 @@ int	my_dist(const int *a, const int *b)
 	+ (a[1] - b[1]) * (a[1] - b[1]));
 }
 
+
+
+// x = 100, pos = [100, 400] (world is just on the ground)
+// int	world_to_screen(t_mlx *mlx, int *buffer, int *coord, int *pos)
+// {
+// 	// max = win_y / 2;
+// 	// min = win_y
+// 	// int	screen;
+
+// 	// screen = mlx->win_y / (1.0f + 1.0f / (my_dist()));
+// 	return (0);
+// }
+
+// int	screen_to_world(int coord, int *pos)
+// {
+	
+// }
+
 // wall coordinates are the bot left angle (top vew, nord up)
 // top line = win_y - 400, bot line == win_y - 100 (win_y = 500)
-int put_wall(t_mlx *mlx, int x, int y, float z, unsigned int color)
+// example: x = 100, y = 200
+/* 
+1 1 1 1 1
+1 0 0 0 1
+1 1 0 0 1
+1 0 0 0 1
+1 P 0 0 1
+1 1 1 1 1
+*/
+int put_south_wall(t_mlx *mlx, int x, int y, float z, unsigned int color)
 {
 	const int	*my_pos = mlx->lobby[*mlx->index].pos;
-	int			wall_pos[2] = { x, y };
-	int			top_line;
+	const int	wall_centre[2] = { x + (100 / 2), y - (100 / 2) };
+	size_t		side;
+	// int			top_line;
 	// int			bot_line;
-	int			left_line;
+	// int			left_line;
+	int			surface;
 
+	// dist == 0, side = win_y / 2
+	// dist == 100, side = 
 	// top_line == 0 -> dist me-wall == 0
-	top_line = my_dist(my_pos, wall_pos);
+	// top_line = my_dist(my_pos, wall_centre);
 	// bot_line = mlx->win_y - top_line;
-	left_line = my_dist(my_pos, wall_pos);
-	put_square(mlx, top_line / 2, left_line / 2, z, 10, color);
+	// left_line = my_dist(my_pos, wall_pos);
+	surface = my_dist(my_pos, wall_centre) - (100 / 2);	// distance from the surface wll if we align
+	side = mlx->win_y - surface;
+	put_square(mlx, x + (side / 2) + z, y + (side / 2) + z, z, side, color);	// screen coordinates
 	return (0);
 }
 
 /* null terminated array of null terminated strings. */
-/* map coord -> real coord = map coord * 10*/
+/* map coord -> real coord = map coord * 100)*/
 static int	put_map(t_mlx *mlx, char **map)
 {
 	unsigned int	i;
@@ -140,12 +173,22 @@ static int	put_map(t_mlx *mlx, char **map)
 	i = 0;
 	while (map[i] != NULL)
 	{
+		// ft_printf("y = %d\n", i);
 		j = 0;
 		while (map[i][j] != '\0')
 		{
+			// ft_printf("x = %d\n", j);
 			if (map[i][j] == '1')
 			{
-				put_square(mlx, i * 10, j * 10, 0, 10, 0xf80f0c);
+				int	wall_coord[2] = { j * 100, i * 100 };
+				int	slide = my_dist(wall_coord, mlx->lobby[*mlx->index].pos) / 10;// sqrt(abs(mlx->lobby[*mlx->index].pos[1] - wall_coord[1])) * abs(mlx->lobby[*mlx->index].pos[0] - wall_coord[0]);
+				if (wall_coord[0] < mlx->lobby[*mlx->index].pos[0])
+					wall_coord[0] -= slide;
+				if (wall_coord[0] > mlx->lobby[*mlx->index].pos[0])
+					wall_coord[0] += slide;
+				// if ((abs(mlx->lobby[*mlx->index].pos[0] - wall_coord[0]) < 100))
+				if (wall_coord[1] < mlx->lobby[*mlx->index].pos[1])
+					put_square(mlx, wall_coord[0], mlx->win_y / 2, 0, mlx->win_y - (abs(mlx->lobby[*mlx->index].pos[1] - wall_coord[1])), 0xf80f0c);
 				// future put wall
 			}
 			j++;
@@ -204,6 +247,7 @@ static int	update_frame(t_mlx *mlx)
 			// ft_printf("send_all(%p, %s, %u)\n", mlx, buffer, ft_strlen(buffer));
 			send_all(mlx, buffer, ft_strlen(buffer), 0);
 		}
+		mlx_mouse_get_pos(mlx->mlx, mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
 		put_board(mlx);
 	}
 	usleep(1000);
@@ -237,6 +281,11 @@ int	minigame(int *index, int *socket, void *thread)
 	mlx.index = index;
 	mlx.socket = socket;
 	mlx.thread = thread;
+	ft_printf("bvefore map\n");
+	mlx.map = handle_map("parsing/maps/square.ber");
+	if (mlx.map == NULL)
+		return (1);
+	ft_printf("HOT MAP\n");
 	if (juice_the_pc(&mlx))
 		return (1);
 	

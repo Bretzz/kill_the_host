@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ade-ross <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 22:45:58 by ade-ross          #+#    #+#             */
-/*   Updated: 2025/05/09 19:08:01 by ade-ross         ###   ########.fr       */
+/*   Updated: 2025/05/09 19:41:06 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@ typedef struct s_mlx_data
 	int			n_of_moves;
 }			t_mlx_data; */
 
+
+char	**handle_map(char *s);
+
 int		ft_strlen_m(const char *s);
 void	error(char *s, char **map, char *map_line);
 
@@ -62,7 +65,6 @@ char	**create_map(char *map_line);
 char	**handle_map(char *s);
 
 /* int		close_game(t_mlx_data *data); */
-void	free_map(char **map);
 /* void	cleanup_map_and_textures(t_mlx_data *data);
 void	clean_init_and_window(t_mlx_data *data); */
 /*
