@@ -6,14 +6,14 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:31:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 14:23:52 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:20:38 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minigame.h"
 
 void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color);
-int		put_line(t_mlx *mlx, int *p, int *t, int *my_pos, unsigned int color);
+int		put_line(t_mlx *mlx, int *p, int *t, int *my_pos, int offset, unsigned int color);
 void	put_square(void *my_struct, int x, int y, float z, unsigned int color);
 
 void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color)
@@ -54,7 +54,7 @@ void	put_square(void *my_struct, int x, int y, float z, unsigned int color)
 }
 
 /* returns 0 if we got killed. */
-int	put_line(t_mlx *mlx, int *p, int *t, int *my_pos, unsigned int color)
+int	put_line(t_mlx *mlx, int *p, int *t, int *my_pos, int offset, unsigned int color)
 {
 	int	proj[2];
 	int dx =  abs (t[0] - p[0]), sx = p[0] < t[0] ? 1 : -1;
@@ -69,7 +69,12 @@ int	put_line(t_mlx *mlx, int *p, int *t, int *my_pos, unsigned int color)
 		if (e2 <= dx) { err += dx; proj[1] += sy; } /* e_xy+e_y < 0 */
 
 		//my stuff (death check)
-		my_pixel_put(mlx, proj[0], proj[1], 0, color);
+		if (i == offset)
+		{
+			//my_pixel_put(mlx, proj[0], proj[1], 0, color);
+			put_square(mlx, proj[0], proj[1], 0, color);
+			break ;
+		}
 		// ft_printf("printing %i %i\n", p[0], p[1]);
 		if (i > 5 && abs(proj[0] - my_pos[0]) < 5 && abs(proj[1] - my_pos[1]) < 5) return (0);
 

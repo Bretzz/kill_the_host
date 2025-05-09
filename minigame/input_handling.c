@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:35:27 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 17:06:31 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:36:42 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,25 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 /* static */int	handle_just_press(int keysym, void *arg)
 {
 	t_mlx	*mlx;
+	char	buffer[92];
 
 	mlx = (t_mlx *)arg;
 	if (keysym == XK_Escape || keysym == 53)
+	{
+		buffer_player_action(mlx->lobby[lbb_next_free_slot() - 1], "host", buffer);
+		// ft_printf("buffer is '%s'\n", buffer);
+		send_all(mlx, buffer, ft_strlen(buffer), 0);
 		clean_exit(mlx);
+	}
 	else if (keysym == XK_KP_Space || keysym == 49 || keysym == 32)
 	{
 		ft_printf(BLUE"== = = == == =\n");
+		ft_printf("status: ");
+		if (*mlx->index == HOST)
+			ft_printf("HOST");
+		else
+			ft_printf("PLAYER");
+		ft_printf(", socket %d\n", *mlx->socket);
 		print_quick_lobby(mlx->lobby);
 		ft_printf(RESET);
 		return (0);
@@ -75,14 +87,15 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 		mlx->key_lx_rx[1] = 0;
 	return (0);
 }
-
+/* ! ! ! OUTDATED ! ! ! */
 int	handle_heypress(int keysym, t_mlx *mlx)
 {
 	char	buffer[92];
 	
 	if (keysym == XK_Escape || keysym == 53)
 	{
-		buffer_player_action(mlx->lobby[lbb_next_free_slot() - 1], "host", buffer);
+		buffer_player_action(mlx->lobby[PLAYER], "host", buffer);
+		ft_printf("buffer is '%s'\n", buffer);
 		send_all(mlx, buffer, ft_strlen(buffer), 0);
 		clean_exit(mlx);
 	}

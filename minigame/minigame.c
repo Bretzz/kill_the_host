@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 17:08:55 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:26:53 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ if we got hit by a line (even ours) we exit. */
 	//my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
 	if (lobby[index].tar[0] || lobby[index].tar[1])
 	{
-		if (lineframes[index] == 1)
+		if (lineframes[index] == 12)
 		{
 			ft_memset(&lobby[index].tar, 0, sizeof(t_point));
 			lineframes[index] = 0;
@@ -87,6 +87,8 @@ if we got hit by a line (even ours) we exit. */
 			lobby[index].pos,
 			lobby[index].tar,
 			mlx->lobby[*mlx->index].pos,
+			lineframes[index] * (sqrt(pow(lobby[index].pos[0] - lobby[index].tar[0], 2)
+				+ pow(lobby[index].pos[1] - lobby[index].tar[1], 2))) / 10,
 			color))
 		{
 			if (*mlx->index == HOST)
