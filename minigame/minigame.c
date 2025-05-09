@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 12:09:14 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:08:55 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,13 +135,13 @@ static int	update_frame(t_mlx *mlx)
 	if (frame++ % 20 == 0)
 	{
 		moved = 0;
-		if (mlx->key_up_dw[0] == 1 && ++moved)
+		if (mlx->key_up_dw[0] == 1 && mlx->lobby[*mlx->index].pos[1] -10 > 0 && ++moved)
 			mlx->lobby[*mlx->index].pos[1] -= 10;
-		if (mlx->key_up_dw[1] == 1 && ++moved)
+		if (mlx->key_up_dw[1] == 1 && mlx->lobby[*mlx->index].pos[1] +10 < mlx->win_y && ++moved)
 			mlx->lobby[*mlx->index].pos[1] += 10;
-		if (mlx->key_lx_rx[0] == 1 && ++moved)
+		if (mlx->key_lx_rx[0] == 1 && mlx->lobby[*mlx->index].pos[0] -10 > 0 && ++moved)
 			mlx->lobby[*mlx->index].pos[0] -= 10;
-		if (mlx->key_lx_rx[1] == 1 && ++moved)
+		if (mlx->key_lx_rx[1] == 1 && mlx->lobby[*mlx->index].pos[0] +10 < mlx->win_x && ++moved)
 			mlx->lobby[*mlx->index].pos[0] += 10;
 		if (moved != 0)
 		{

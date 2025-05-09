@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:35:27 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 11:23:39 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:06:31 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,11 @@ int	handle_heypress(int keysym, t_mlx *mlx)
 	char	buffer[92];
 	
 	if (keysym == XK_Escape || keysym == 53)
+	{
+		buffer_player_action(mlx->lobby[lbb_next_free_slot() - 1], "host", buffer);
+		send_all(mlx, buffer, ft_strlen(buffer), 0);
 		clean_exit(mlx);
+	}
 	else if (keysym == XK_KP_Space || keysym == 49 || keysym == 32)
 	{
 		ft_printf(BLUE"== = = == == =\n");

@@ -13,9 +13,8 @@ Libft authorized Yes
 
 
 KILL_THE_HOST extras:
-(client.c) socket, connect, htons (replaceble), send, recv
-(client_reciever.c) pthread_create, pthread_detach
+(client.c) socket, htons (replaceble), sendto, recvfrom
+(client_reciever.c) pthread_create, pthread_detach, pthread_join
 (server.c) htonl (replaceble)
 (server_reciever.c) usleep, accept
 (main.c) pthread_join
-(minigame.c) kill, getpid
