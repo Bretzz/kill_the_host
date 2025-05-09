@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 17:19:47 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 18:46:42 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ typedef struct s_mlx
 	void			*mlx;
 	void			*win;
 	t_img			img;
+	char			**map;
 	t_player		*lobby;
 	int				*index;
 	int				*socket;
@@ -87,7 +88,7 @@ int		handle_just_release(int keysym, void *arg);
 
 void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color);
 int		put_line(t_mlx *mlx, int *p, int *t, int *my_pos, int offset, unsigned int color);
-void	put_square(void *my_struct, int x, int y, float z, unsigned int color);
+void	put_square(void *my_struct, int x, int y, float z, int side, unsigned int color);
 
 void	send_all(t_mlx *mlx, char *msg, size_t msg_size, char flag);
 

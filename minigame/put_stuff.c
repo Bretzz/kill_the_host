@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:31:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 17:20:38 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 18:46:36 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color);
 int		put_line(t_mlx *mlx, int *p, int *t, int *my_pos, int offset, unsigned int color);
-void	put_square(void *my_struct, int x, int y, float z, unsigned int color);
+void	put_square(void *my_struct, int x, int y, float z, int side, unsigned int color);
 
 void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color)
 {
@@ -33,11 +33,10 @@ void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color)
 	*(unsigned int *)dst = color;
 }
 
-void	put_square(void *my_struct, int x, int y, float z, unsigned int color)
+void	put_square(void *my_struct, int x, int y, float z, int side, unsigned int color)
 {
-	const int	side = 10;
-	int			s_x;
-	int			s_y;
+	int	s_x;
+	int	s_y;
 
 	(void)z;
 	s_y = y - (side / 2);
@@ -72,7 +71,7 @@ int	put_line(t_mlx *mlx, int *p, int *t, int *my_pos, int offset, unsigned int c
 		if (i == offset)
 		{
 			//my_pixel_put(mlx, proj[0], proj[1], 0, color);
-			put_square(mlx, proj[0], proj[1], 0, color);
+			put_square(mlx, proj[0], proj[1], 0, 10, color);
 			break ;
 		}
 		// ft_printf("printing %i %i\n", p[0], p[1]);

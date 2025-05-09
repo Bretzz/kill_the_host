@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 17:26:53 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 18:45:44 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ if we got hit by a line (even ours) we exit. */
 		color = 0xFF0000;
 	else
 		color = 0xFFFFFF;
-	put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
+	put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
 	//my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
 	if (lobby[index].tar[0] || lobby[index].tar[1])
 	{
@@ -104,6 +104,57 @@ if we got hit by a line (even ours) we exit. */
 	return (1);
 }
 
+int	my_dist(const int *a, const int *b)
+{
+	return (sqrt((a[0] - b[0]) * (a[0] - b[0]))
+	+ (a[1] - b[1]) * (a[1] - b[1]));
+}
+
+// wall coordinates are the bot left angle (top vew, nord up)
+// top line = win_y - 400, bot line == win_y - 100 (win_y = 500)
+int put_wall(t_mlx *mlx, int x, int y, float z, unsigned int color)
+{
+	const int	*my_pos = mlx->lobby[*mlx->index].pos;
+	int			wall_pos[2] = { x, y };
+	int			top_line;
+	// int			bot_line;
+	int			left_line;
+
+	// top_line == 0 -> dist me-wall == 0
+	top_line = my_dist(my_pos, wall_pos);
+	// bot_line = mlx->win_y - top_line;
+	left_line = my_dist(my_pos, wall_pos);
+	put_square(mlx, top_line / 2, left_line / 2, z, 10, color);
+	return (0);
+}
+
+/* null terminated array of null terminated strings. */
+/* map coord -> real coord = map coord * 10*/
+static int	put_map(t_mlx *mlx, char **map)
+{
+	unsigned int	i;
+	size_t			j;
+
+	if (map == NULL)
+		return (1);
+	i = 0;
+	while (map[i] != NULL)
+	{
+		j = 0;
+		while (map[i][j] != '\0')
+		{
+			if (map[i][j] == '1')
+			{
+				put_square(mlx, i * 10, j * 10, 0, 10, 0xf80f0c);
+				// future put wall
+			}
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
 static int	put_board(t_mlx *mlx)
 {
 	int	i;
@@ -113,6 +164,8 @@ static int	put_board(t_mlx *mlx)
 			.bits_per_pixel, &mlx->img.line_length, &mlx->img.endian);
 	if (!mlx->img.img || !mlx->img.addr)
 		return (0);
+
+	put_map(mlx, mlx->map);
 
 	i = 0;
 	while (i < MAXPLAYERS)
