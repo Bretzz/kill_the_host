@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 21:42:13 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/09 15:52:01 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 16:03:29 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,10 @@ int	who_is_there(int socket, t_player *lobby, struct sockaddr_in *addr, char *bu
 	buffer_lobby_action(lobby, "new", bluffer);
 	// addr->sin_port = htons ( PORT_2 );
 
-	ft_printf(PURPLE"sending ack '%s' to %s%s\n", bluffer, "<new-client>", RESET);
+	ft_printf(PURPLE);
 	if (server_sender(socket, bluffer, addr, 1) < 0)
 		return (0);
+	ft_printf(RESET);
 
 	// storing addr in dynamic sockaddr
 	personal = malloc(sizeof(struct sockaddr_in));
@@ -96,7 +97,7 @@ static void	*reciever(void *arg)
 	ft_printf(LOG">recieving on socket %d%s\n", socket, RESET);
 	while (!0)
 	{
-		len = 0;
+		len = sizeof(addr);
 		ft_memset(&addr, 0, sizeof(addr));
 		ft_memset(buffer, 0, sizeof(buffer));
 		if (recvfrom(socket, buffer, MAXLINE, 0, (struct sockaddr *)&addr, &len) < 0)

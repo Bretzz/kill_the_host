@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:02:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 15:43:32 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 15:59:16 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static int bind_to_port(const char *myip)
 	}
 	ft_memset(&myaddr, 0, sizeof(struct sockaddr_in));
 	myaddr.sin_family = AF_INET;
-	myaddr.sin_port = htons ( PORT_2 );
+	// myaddr.sin_port = htons ( PORT_2 );
 	myaddr.sin_addr.s_addr = htonl( INADDR_ANY );// (in_addr_t)inet_addr(myip); //192.168.1.5 // htonl( INADDR_ANY ); // ip_to_uns crash on macOS
 	if (bind(servfd, (struct sockaddr *)&myaddr, sizeof(struct sockaddr)))
 	{
