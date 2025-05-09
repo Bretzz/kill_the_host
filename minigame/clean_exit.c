@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 12:02:14 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 15:18:55 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 21:09:37 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	clean_exit(t_mlx *mlx)
 	// wait the thread
 	if (tid && pthread_join(tid, NULL) != 0) { /* throw error */ }
 	lbb_delete_lobby((lbb_get_ptr(NULL)));
+	free_mtx((void **)mlx->map);
 	//finally exit
 	exit(EXIT_SUCCESS);
 	return (0);
