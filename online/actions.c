@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:03:47 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 22:03:59 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 15:36:09 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,5 +67,7 @@ void	host_player(const char *msg, t_player *lobby)
 	slot = lbb_get_index(msg);
 	if (slot < 0)
 		return ;
+	free(lobby[HOST].online);	// could be done better
 	lbb_move_player(slot, 0);
+	lbb_push_up();
 }

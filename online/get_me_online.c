@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 12:15:22 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 14:26:14 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 15:24:23 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static void	*manager(void *arg)
 		code = pthread_join(tid, NULL);
 		if (code != 0)
 		{
-			ft_printfd(STDERR_FILENO, ERROR"join failure:%s code %d\n", RESET, code);
+			ft_printfd(STDERR_FILENO, ERROR"online join failure:%s code %d\n", RESET, code);
 			*setup->index = -1;
 			return (free(setup), NULL);
 		}
@@ -65,7 +65,7 @@ static void	*manager(void *arg)
 		if (*setup->index < 0)	// we died (-1 set in minigame)
 			return (free(setup), NULL);
 		if (!ft_strcmp(get_locl_ip(setup->envp), lobby[HOST].ip))
-			*setup->index = 0;
+			*setup->index = HOST;
 		else
 			make_him_host(lobby[HOST].ip, setup->envp);	//could break
 	}
