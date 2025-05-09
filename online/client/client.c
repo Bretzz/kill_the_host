@@ -6,12 +6,31 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:02:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 14:43:11 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 14:58:22 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "kill_the_host.h"
 #include "client.h"
+
+static int set_serv_addr(const char *servip)
+{
+	t_player *const		lobby = lbb_get_ptr(NULL);
+	struct sockaddr_in	*serveraddr;
+
+	serveraddr = malloc(sizeof(struct sockaddr_in));
+	if (serveraddr == NULL)
+	{
+		ft_perror(ERROR"malloc failure"RESET);
+		return (-1);
+	}
+	ft_memset(serveraddr, 0, sizeof(struct sockaddr_in));
+	serveraddr->sin_family = AF_INET;
+	serveraddr->sin_port = htons ( PORT_1 );
+	serveraddr->sin_addr.s_addr = (in_addr_t)inet_addr(servip); //192.168.1.5 //INADDR_ANY // ip_to_uns crash on macOS
+	lobby[HOST].online = serveraddr;
+	return (0);
+}
 
 /* The client is a bit trickier. First Binds a socket to
 addrin from the SERVER_ONLY... that's it, you talk and
@@ -26,35 +45,27 @@ listen from that. */
 /* Binding UDP socket to only recieve from MYPORT and
 the ip passed.
 RETURNS: the bound socket, -1 on error */
-static int bind_to_server(const char *servip)
+static int bind_to_port(const char *myip)
 {
-	t_player *const		lobby = lbb_get_ptr(NULL);
     int					servfd;
-	struct sockaddr_in	*serveraddr;
+	struct sockaddr_in	myaddr;
 
-	serveraddr = malloc(sizeof(struct sockaddr_in));
-	if (serveraddr == NULL)
-	{
-		ft_perror(ERROR"malloc failure"RESET);
-		return (-1);
-	}
+	(void)myip;
 	if ((servfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 	{
 		ft_perror(ERROR"socket failure"RESET);
 		return (-1);
 	}
 	ft_printf(LOG"servfd is %d\n"RESET, servfd);
-	ft_memset(serveraddr, 0, sizeof(struct sockaddr_in));
-	serveraddr->sin_family = AF_INET;
-	serveraddr->sin_port = htons ( PORT_2 );
-	serveraddr->sin_addr.s_addr = (in_addr_t)inet_addr(servip); //192.168.1.5 //INADDR_ANY // ip_to_uns crash on macOS
-	if (bind(servfd, (struct sockaddr *)serveraddr, sizeof(struct sockaddr)))
+	ft_memset(&myaddr, 0, sizeof(struct sockaddr_in));
+	myaddr.sin_family = AF_INET;
+	myaddr.sin_port = htons ( PORT_2 );
+	myaddr.sin_addr.s_addr = (in_addr_t)inet_addr("127.0.0.1"); //192.168.1.5 // htonl( INADDR_ANY ); // ip_to_uns crash on macOS
+	if (bind(servfd, (struct sockaddr *)&myaddr, sizeof(struct sockaddr)))
 	{
 		ft_perror(ERROR"bind failure"RESET);
 		return (-1);
 	}
-	serveraddr->sin_port = htons ( PORT_1 );
-	lobby[HOST].online = serveraddr;
 	return (servfd);
 }
 
@@ -125,8 +136,10 @@ int	client_routine(pthread_t *tid, char *envp[])
 	if (!my_data_init(lobby, envp))
 		return (-1);
 	ft_printf(LOG">data init ok...%s\n", RESET);
-	servfd = bind_to_server(get_serv_ip(envp));
+	servfd = bind_to_port(get_locl_ip(envp));
 	if (servfd < 0)
+		return (-1);
+	if (set_serv_addr(get_serv_ip(envp)) < 0)
 		return (-1);
 	ft_printf(LOG">ack procedure... (socket %d)%s\n", servfd, RESET);
 	if (serv_ack(servfd, lobby) < 0)
