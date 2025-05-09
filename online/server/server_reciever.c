@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_reciever.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 21:42:13 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/09 01:29:58 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 14:40:33 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "server.h"
 #include <pthread.h>
 
-int	server_reciever(int servfd, t_player *lobby);
+int	server_reciever(pthread_t *tid, int socket);
 
 /* 0 error, 1 ok */ /* rn no selective ban on sussy behaviour */
 int	who_is_there(int socket, t_player *lobby, struct sockaddr_in *addr, char *buffer)
@@ -32,6 +32,8 @@ int	who_is_there(int socket, t_player *lobby, struct sockaddr_in *addr, char *bu
 	// changing addr port and sending it to the new player
 	buffer_lobby_action(lobby, "new", bluffer);
 	addr->sin_port = htons ( PORT_2 );
+
+	ft_printf(PURPLE"sending ack '%s' to %s%s\n", bluffer, "<new-client>", RESET);
 	if (server_sender(socket, bluffer, addr, 1) < 0)
 		return (0);
 
@@ -94,6 +96,8 @@ static void	*reciever(void *arg)
 	ft_printf(LOG">recieving on socket %d%s\n", socket, RESET);
 	while (!0)
 	{
+		len = 0;
+		ft_memset(&addr, 0, sizeof(addr));
 		ft_memset(buffer, 0, sizeof(buffer));
 		if (recvfrom(socket, buffer, MAXLINE, 0, (struct sockaddr *)&addr, &len) < 0)
 		{
@@ -126,24 +130,19 @@ static void	*reciever(void *arg)
 
 /* Spawns a thread that listen to the everyone
 and handles new connections. */
-int	server_reciever(int socket, t_player *lobby)
+int	server_reciever(pthread_t *tid, int socket)
 {
-	pthread_t	tid;
-	int			code;
-
-	(void)lobby;	// <-- this is sad
-	if (pthread_create(&tid, NULL, &reciever, &socket) < 0)
+	if (pthread_create(tid, NULL, &reciever, &socket) < 0)
 	{
 		ft_perror(ERROR"reciever launch failed"RESET);
 		return (-1);
 	}
-	code = pthread_detach(tid);
 	// might need usleep
 	sleep(1);
-	if (code != 0)
-	{
-		ft_printfd(STDERR_FILENO, ERROR"detach failure:%s code %d\n", RESET, code);
-		return (-1);
-	}
+	// if (code != 0)
+	// {
+	// 	ft_printfd(STDERR_FILENO, ERROR"detach failure:%s code %d\n", RESET, code);
+	// 	return (-1);
+	// }
 	return (0);
 }

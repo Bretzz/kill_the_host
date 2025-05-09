@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:02:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 01:17:28 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 14:43:11 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ static int bind_to_server(const char *servip)
 		ft_perror(ERROR"malloc failure"RESET);
 		return (-1);
 	}
-	lobby[HOST].online = serveraddr;
 	if ((servfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 	{
 		ft_perror(ERROR"socket failure"RESET);
@@ -55,6 +54,7 @@ static int bind_to_server(const char *servip)
 		return (-1);
 	}
 	serveraddr->sin_port = htons ( PORT_1 );
+	lobby[HOST].online = serveraddr;
 	return (servfd);
 }
 
@@ -69,7 +69,7 @@ static int	serv_ack(int servfd, t_player *lobby)
 	//player signature name:ip
 	buffer_player_action(lobby[PLAYER], "new", buffer);
 
-	ft_printf(YELLOW"[test] sending '%s' to server%s\n", buffer, RESET);
+	ft_printf(PURPLE"[test] sending '%s' to server%s\n", buffer, RESET);
 
 	//send test
 	if (sendto(servfd, buffer, ft_strlen(buffer), 0, (struct sockaddr *)lobby[HOST].online, sizeof(struct sockaddr)) < 0)
@@ -86,7 +86,7 @@ static int	serv_ack(int servfd, t_player *lobby)
 		return (-1);
 	}
 
-	ft_printf(YELLOW"[test] recieved '%s' from server%s\n", buffer, RESET);
+	ft_printf(PURPLE"[test] recieved '%s' from server%s\n", buffer, RESET);
 
 	// getting lobby stats from server
 	if (!cycle_player_msgs(buffer, lobby))
@@ -112,9 +112,10 @@ static int	my_data_init(t_player *lobby, char *env[])
 
 /* returns 0 on error, the socket to write onto.
 NOTE: the thread is detached. goes his way */
-int	client_routine(t_player *lobby, char *envp[])
+int	client_routine(pthread_t *tid, char *envp[])
 {
-	int	servfd;
+	t_player *const	lobby = lbb_get_ptr(NULL);
+	int				servfd;
 
 	if (!ft_strcmp("ip-not-found", get_serv_ip(envp)))
 	{
@@ -127,11 +128,11 @@ int	client_routine(t_player *lobby, char *envp[])
 	servfd = bind_to_server(get_serv_ip(envp));
 	if (servfd < 0)
 		return (-1);
-	ft_printf(LOG">testing connection... (socket %d)%s\n", servfd, RESET);
+	ft_printf(LOG">ack procedure... (socket %d)%s\n", servfd, RESET);
 	if (serv_ack(servfd, lobby) < 0)
 		return (close(servfd), -1);
 	ft_printf(LOG">connection approved...%s\n", RESET);
-	if (client_reciever(servfd, lobby) < 0)
+	if (client_reciever(tid, servfd) < 0)
 		return (close(servfd), -1);
 	usleep(1000);
 	print_lobby(lobby);

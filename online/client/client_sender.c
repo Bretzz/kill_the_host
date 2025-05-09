@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client_sender.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 11:51:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 23:11:19 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 11:00:57 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,18 @@ static void	staitc_mutex_init(pthread_mutex_t *mutex)
 }
 
 /* -1 error, 0 ok */
+/* if servfd = -1, destroy the mutex */
 /* !!! NEED MUTEX !!! */
 int	client_sender(int servfd, void *buffer, size_t size)
 {
 	t_player *const			lobby = lbb_get_ptr(NULL);
 	static pthread_mutex_t	mutex;
 
+	if (servfd < 0)
+	{
+		pthread_mutex_destroy(&mutex);
+		return (0);
+	}
 	staitc_mutex_init(&mutex);
 	ft_printf(YELLOW"sending '%s' to server%s\n", buffer, RESET);
 	pthread_mutex_lock(&mutex);

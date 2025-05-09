@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:34:21 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 00:13:56 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 12:34:51 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,10 @@ int	my_data_init(t_player *lobby, char *envp[])
 }
 
 /* Retutns the socket to talk to */
-int	server_routine(t_player *lobby, char *envp[])
+int	server_routine(pthread_t *tid, char *envp[])
 {
-	int			socket;
+	t_player *const	lobby = lbb_get_ptr(NULL);
+	int				socket;
 
 	if (!my_data_init(lobby, envp))
 		return (-1);
@@ -79,7 +80,7 @@ int	server_routine(t_player *lobby, char *envp[])
 	// ft_printf(LOG">bound socket to %d%s\n", socket, RESET);
 	if (socket < 0)
 		return (-1);
-	if (server_reciever(socket, lobby) < 0)
+	if (server_reciever(tid, socket) < 0)
 		return (close(socket), -1);
 	return (socket);
 	// start server_reciever

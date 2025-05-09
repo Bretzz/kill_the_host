@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 23:35:15 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 23:02:51 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 12:35:56 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,14 @@
 that every thread can exit cleanly. */
 
 # include "../online.h"
-# include <pthread.h>
 
 /* EXTERNAL USE */
 
 int server_sender(int socket, char *buffer, void *addr, char flag);
-int	server_routine(t_player *lobby, char *envp[]);
+int	server_routine(pthread_t *tid, char *envp[]);
 
 /* INTERNAL USE */
 
-int	server_reciever(int servfd, t_player *lobby);
+int	server_reciever(pthread_t *tid, int socket);
 
 #endif

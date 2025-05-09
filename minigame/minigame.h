@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minigame.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 01:34:28 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 11:58:56 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 //mlx libraries
 # include "mlx.h"
+// # include "mlx_int.h"	// needed for clean exit
 # include <X11/X.h>
 # include <X11/keysym.h>
 # include <math.h>
@@ -74,7 +75,8 @@ typedef struct s_mlx
 	t_img			img;
 	t_player		*lobby;
 	int				*index;
-	int				socket;
+	int				*socket;
+	void			*thread;
 }				t_mlx;
 
 int		handle_heypress(int keysym, t_mlx *mlx);
@@ -87,7 +89,7 @@ void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color);
 int		put_line(t_mlx *mlx, int *p, int *t, int *my_pos, unsigned int color);
 void	put_square(void *my_struct, int x, int y, float z, unsigned int color);
 
-void	send_all(t_mlx *mlx, char *msg, size_t msg_size);
+void	send_all(t_mlx *mlx, char *msg, size_t msg_size, char flag);
 
 int 	clean_exit(t_mlx *mlx);
 

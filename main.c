@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 00:42:19 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/08 23:04:59 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 12:56:52 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@
 int	main(int argc, char *argv[], char *env[])
 {
 	t_player			*lobby;
-	int					index;
 	//char		pos_tar[30];
 	// char		name[43];
 	// char		ip[16];
@@ -96,49 +95,54 @@ int	main(int argc, char *argv[], char *env[])
 	//ft_printf("name='%s'\nip='%s'\npos=%d_%d_%d\n", lobby[0].name, lobby[0].ip, lobby[0].pos[0], lobby[0].pos[1], lobby[0].pos[2]);
 	ft_printf(LOG"THIS THING CRASHES: right now each player has his online stuff in 'server' mode but the message aren't beingn rebound to anyone, so it's useless, he just listens.\nthe client is almost done, we need the send-message part then, thhe ones that qquits cleanly on host's death (also for server), then all good%s\n", RESET);
 	int			socket;
-
+	int			index;
 	// #include <signal.h>
 	// sigaction(SIGUSR1, NULL, NULL);
 
 	if (!ft_strcmp("host", get_serv_ip(env)))
-	{
-		socket = server_routine(lobby, env);
-		if (socket < 0)
-		{
-			lbb_delete_lobby((lbb_get_ptr(NULL)));
-			return (1);
-		}
-		usleep(1000);
 		index = 0;
-		minigame(&index, socket);
-		// pthread_join(listid, NULL);
-		print_lobby(lobby);
-	}
 	else
-	{
-		socket = client_routine(lobby, env);
-		if (socket < 0)
-		{
-			lbb_delete_lobby((lbb_get_ptr(NULL)));
-			return (1);
-		}
-		// int servfd;
-		// ft_memcpy(&servfd, &lobby->online, sizeof(int));
-
-		// char *line;
-		// while ((line = get_next_line(STDIN_FILENO)) != NULL)
-		// {
-		// 	line[ft_strlen(line) - 1] = '\0';
-		// 	client_sender(servfd, line, ft_strlen(line));
-		// 	free(line);
-		// }
-		usleep(1000);
 		index = 1;
-		minigame(&index, socket);
-		// pthread_join(servtid, NULL);
-		print_lobby(lobby);
+	pthread_t	tid = get_me_online(&index, &socket, env);
+	usleep(1000);
+	minigame(&index, &socket, &tid);
+	// 	socket = server_routine(lobby, env);
+	// 	if (socket < 0)
+	// 	{
+	// 		lbb_delete_lobby((lbb_get_ptr(NULL)));
+	// 		return (1);
+	// 	}
+	// 	usleep(1000);
+	// 	index = 0;
+	// 	minigame(&index, &socket, NULL);
+	// 	// pthread_join(listid, NULL);
+	// 	print_lobby(lobby);
+	// }
+	// else
+	// {
+	// 	socket = client_routine(lobby, env);
+	// 	if (socket < 0)
+	// 	{
+	// 		lbb_delete_lobby((lbb_get_ptr(NULL)));
+	// 		return (1);
+	// 	}
+	// 	// int servfd;
+	// 	// ft_memcpy(&servfd, &lobby->online, sizeof(int));
+
+	// 	// char *line;
+	// 	// while ((line = get_next_line(STDIN_FILENO)) != NULL)
+	// 	// {
+	// 	// 	line[ft_strlen(line) - 1] = '\0';
+	// 	// 	client_sender(servfd, line, ft_strlen(line));
+	// 	// 	free(line);
+	// 	// }
+	// 	usleep(1000);
+	// 	index = 1;
+	// 	minigame(&index, &socket, NULL);
+	// 	// pthread_join(servtid, NULL);
+	// 	print_lobby(lobby);
 		
-	}
+	// }
 	lbb_delete_lobby((lbb_get_ptr(NULL)));
 	return (0);
 }

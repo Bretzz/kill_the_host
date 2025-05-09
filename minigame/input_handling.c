@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:35:27 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 14:11:51 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 11:23:39 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 		//player_specs(mlx->lobby[*mlx->index]);
 		buffer_player_action(mlx->lobby[*mlx->index], "update", buffer);
 		// ft_printf("send_all(%p, %s, %u)\n", mlx, buffer, ft_strlen(buffer));
-		send_all(mlx, buffer, ft_strlen(buffer));
+		send_all(mlx, buffer, ft_strlen(buffer), 0);
 	}
 	else
 		ft_printf("Mouse thing N. %d\n", keysym);
@@ -85,6 +85,7 @@ int	handle_heypress(int keysym, t_mlx *mlx)
 	else if (keysym == XK_KP_Space || keysym == 49 || keysym == 32)
 	{
 		ft_printf(BLUE"== = = == == =\n");
+		ft_printf("INDEX: %d, socket %d\n", *mlx->index, *mlx->socket);
 		print_quick_lobby(mlx->lobby);
 		ft_printf(RESET);
 		return (0);
@@ -107,6 +108,6 @@ int	handle_heypress(int keysym, t_mlx *mlx)
 	//player_specs(mlx->player[0]); player_specs(mlx->player[1]);
 	buffer_player_action(mlx->lobby[*mlx->index], "update", buffer);
 	// ft_printf("send_all(%p, %s, %u)\n", mlx, buffer, ft_strlen(buffer));
-	send_all(mlx, buffer, ft_strlen(buffer));
+	send_all(mlx, buffer, ft_strlen(buffer), 0);
 	return (0);
 }

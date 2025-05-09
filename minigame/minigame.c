@@ -3,72 +3,61 @@
 /*                                                        :::      ::::::::   */
 /*   minigame.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 01:34:51 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 12:09:14 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minigame.h"
 #include <unistd.h>
-#include <signal.h>
 
-int 	clean_exit(t_mlx *mlx);
-void	send_all(t_mlx *mlx, char *msg, size_t msg_size);
+void	send_all(t_mlx *mlx, char *msg, size_t msg_size, char flag);
 
-int clean_exit(t_mlx *mlx)
-{
-	char	buffer[92];
+// int clean_exit(t_mlx *mlx)
+// {
+// 	char	buffer[92];
 	
-	// host and players tell the others to kill them the same way
-	buffer_player_action(mlx->lobby[*mlx->index], "kill", buffer);
+// 	// host and players tell the others to kill them the same way
+// 	buffer_player_action(mlx->lobby[*mlx->index], "kill", buffer);
 	
-	//game_sender
-	send_all(mlx, buffer, ft_strlen(buffer));
-	// if (*mlx->index == HOST)
-	// 	ft_memcpy(&socket, mlx->lobby[HOST].online, sizeof(int));
-	// else
-	// 	ft_memcpy(&socket, &mlx->lobby[HOST].online, sizeof(int));
-	shutdown(mlx->socket, SHUT_RDWR);
-	close(mlx->socket);	// gets the threads out of the syscall
-	sleep(1);
-	// lbb_kill_player(buffer);	// gets the thread out of the loop
-	mlx_destroy_window(mlx->mlx, mlx->win);
-	// mlx_destroy_display(mlx->mlx);
-	print_lobby(mlx->lobby);
-	lbb_delete_lobby((lbb_get_ptr(NULL)));
-	free(mlx->mlx);
-	exit(EXIT_SUCCESS);
-}
+// 	//game_sender
+// 	send_all(mlx, buffer, ft_strlen(buffer), 0);
+// 	// if (*mlx->index == HOST)
+// 	// 	ft_memcpy(&socket, mlx->lobby[HOST].online, sizeof(int));
+// 	// else
+// 	// 	ft_memcpy(&socket, &mlx->lobby[HOST].online, sizeof(int));
+// 	shutdown(*mlx->socket, SHUT_RDWR);
+// 	close(*mlx->socket);	// gets the threads out of the syscall
+// 	sleep(1);
+// 	// lbb_kill_player(buffer);	// gets the thread out of the loop
+// 	mlx_destroy_window(mlx->mlx, mlx->win);
+// 	mlx_destroy_display(mlx->mlx);
+// 	print_lobby(mlx->lobby);
+// 	// wait the thread
+// 	lbb_delete_lobby((lbb_get_ptr(NULL)));
+// 	free(mlx->mlx);
+// 	exit(EXIT_SUCCESS);
+// 	return (0);
+// }
 
-void	send_all(t_mlx *mlx, char *msg, size_t size)
+void	send_all(t_mlx *mlx, char *msg, size_t size, char flag)
 {
-	if (*mlx->index == HOST)
-		server_sender(mlx->socket, msg, NULL, 0);
+	if (flag == -1)
+	{
+		if (*mlx->index == HOST)
+			server_sender(*mlx->socket, msg, NULL, flag);	//destroy mutex
+		else
+			client_sender(flag, msg, size);					// destroy mutex
+	}
 	else
-		client_sender(mlx->socket, msg, size);
-	// return ;
-	// ft_printf(GREEN"sending: %s\n"RESET, msg);
-	// if (*mlx->index == PLAYER) //sendto host (ClientUDP)
-	// {
-	// 	ft_memcpy(&socket, &mlx->lobby->online, sizeof(int));
-	// 	if (send(socket, msg, msg_size, 0) < 0 )
-	// 		ft_perror(ERROR"sendto failed"RESET);
-	// 	return ;
-	// }
-	// i = 1;
-	// while (i < MAXPLAYERS) //sendto players (ServerUDP)
-	// {
-	// 	// ft_printf("sending to %i\n", i);
-	// 	if (lbb_is_alive(mlx->lobby[i]))
-	// 	{			
-	// 		ft_memcpy(&socket, mlx->lobby[i].online, sizeof(int));
-	// 		if (send(socket, msg, msg_size, 0) < 0 )
-	// 			ft_perror(ERROR"sendto failed"RESET);
-	// 	}
-	// 	i++;
-	// }
+	{
+		if (*mlx->index == HOST)
+			server_sender(*mlx->socket, msg, NULL, 0);
+		else
+			client_sender(*mlx->socket, msg, size);
+	}
 }
 
 /* puts all the player info, position and target (with line for shot).
@@ -104,7 +93,7 @@ if we got hit by a line (even ours) we exit. */
 			{
 				char	buffer[MAXLINE];
 				buffer_player_action(mlx->lobby[index], "host", buffer);
-				send_all(mlx, buffer, ft_strlen(buffer));
+				send_all(mlx, buffer, ft_strlen(buffer), 0);
 			}
 			clean_exit(mlx);
 		}
@@ -158,7 +147,7 @@ static int	update_frame(t_mlx *mlx)
 		{
 			buffer_player_action(mlx->lobby[*mlx->index], "update", buffer);
 			// ft_printf("send_all(%p, %s, %u)\n", mlx, buffer, ft_strlen(buffer));
-			send_all(mlx, buffer, ft_strlen(buffer));
+			send_all(mlx, buffer, ft_strlen(buffer), 0);
 		}
 		put_board(mlx);
 	}
@@ -183,7 +172,8 @@ static int	juice_the_pc(t_mlx *mlx)
 	return (0);
 }
 
-int	minigame(int *index, int socket)
+/* Index = PLAYER ? HOST, socket = pointer to socket, thread = pointer to tid */
+int	minigame(int *index, int *socket, void *thread)
 {
 	t_mlx	mlx;
 
@@ -191,6 +181,7 @@ int	minigame(int *index, int socket)
 	mlx.lobby = lbb_get_ptr(NULL);
 	mlx.index = index;
 	mlx.socket = socket;
+	mlx.thread = thread;
 	if (juice_the_pc(&mlx))
 		return (1);
 	
@@ -198,7 +189,7 @@ int	minigame(int *index, int socket)
 	put_board(&mlx);
 	//ft_printf("board put\n");
 
-	ft_printf(RED"MLX ADDRESS: %p socket %d\n"RESET, &mlx, mlx.socket);
+	ft_printf(RED"MLX ADDRESS: %p socket %d\n"RESET, &mlx, *mlx.socket);
 
 	//game mechanics
 	mlx_mouse_hook(mlx.win, &handle_mouse, &mlx);

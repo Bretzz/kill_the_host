@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_sender.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:14:57 by totommi           #+#    #+#             */
-/*   Updated: 2025/05/09 01:36:22 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 14:38:34 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,10 @@ static void	staitc_mutex_init(pthread_mutex_t *mutex)
 }
 
 /* -1 error, 0 ok */
-/* socket and message to send, if flag == 1 send to addr,
-if flag == 0 send to everyone BUT addr. */
+/* socket and message to send,
+if flag == 1 send to addr,
+if flag == 0 send to everyone BUT addr.
+if flag == -1, desroy the mutex. */
 /* NOTE: case addr = NULL:
 	flag 1, error,
 	flag 0, send to all.  */
@@ -34,11 +36,20 @@ int server_sender(int socket, char *buffer, void *addr, char flag)
 	static pthread_mutex_t	mutex;
 	int						i;
 
+	if (flag < 0)
+	{
+		pthread_mutex_destroy(&mutex);
+		return (0);
+	}
 	ft_printf(YELLOW"sending '%s'%s\n", (char *)buffer, RESET);
 	staitc_mutex_init(&mutex);
 	if (flag == 1)
 	{
 		pthread_mutex_lock(&mutex);
+		// struct sockaddr_in	*sin = addr;
+		// unsigned char *ip = (unsigned char *)&sin->sin_addr.s_addr;
+		// 
+		// ft_printf("sending to %d.%d.%d.%d\n", ip[0], ip[1], ip[2], ip[3]); 
 		if (sendto(socket, buffer, ft_strlen(buffer), 0, addr, sizeof(struct sockaddr)) < 0)
 		{
 			ft_perror(ERROR"sendto failure"RESET);

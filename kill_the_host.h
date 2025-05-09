@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kill_the_host.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 20:51:32 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 23:49:21 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 12:58:20 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,20 @@
 
 /* GAME */
 
-int	minigame(int *index, int socket);
+int	minigame(int *index, int *socket, void *thread);
 
 /* CLIENT */
 
-int	client_routine(t_player *lobby, char *envp[]);
+int	client_routine(pthread_t *tid, char *envp[]);
 int	client_sender(int servfd, void *buffer, size_t size);
 
 /* SERVER */
 
-int	server_routine(t_player *lobby, char *envp[]);
+int	server_routine(pthread_t *tid, char *envp[]);
 int server_sender(int socket, char *buffer, void *addr, char flag);
 
+
+pthread_t	get_me_online(int *index, int *socket, char *envp[]);
 
 /* UTILS */
 
@@ -68,5 +70,6 @@ void			print_quick_lobby(t_player *lobby);
 char	*get_locl_ip(char **env);
 char	*get_serv_ip(char **env);
 char	*get_my_name(char **env);
+int	make_him_host(char *ip, char **env);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   online.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:04:41 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 00:11:29 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 12:29:22 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,18 @@
 //# include <sys/types.h>
 # include <netdb.h>
 
+#include <pthread.h>
+
 # define PORT_1 42042
 # define PORT_2 41041
 # define MAXLINE 1024 
+
+typedef struct s_setup
+{
+	int	*index;
+	int	*socket;
+	char **envp;
+}				t_setup;
 
 
 /* MSG STRING MANAGEMENT */

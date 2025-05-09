@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 21:03:05 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/08 22:43:26 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/09 12:38:09 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,9 @@ that every thread can exit cleanly.*/
 /* EXTERNAL USE */
 
 int	client_sender(int servfd, void *buffer, size_t size);
-int	client_routine(t_player *lobby, char *envp[]);
+int	client_routine(pthread_t *tid, char *envp[]);
 
 /* INTERNAL USE */
 
-int	client_reciever(int servfd, t_player *lobby);
-
+int	client_reciever(pthread_t *tid, int servfd);
 #endif 

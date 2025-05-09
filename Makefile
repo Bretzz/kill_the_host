@@ -65,6 +65,8 @@ SRC_FILES		= main.c \
 				\
 				msg_utils.c \
 				\
+				get_me_online.c \
+				\
 				client.c \
 				client_reciever.c \
 				client_sender.c \
@@ -77,6 +79,7 @@ SRC_FILES		= main.c \
 				msg_handler.c \
 				\
 				minigame.c \
+				clean_exit.c \
 				input_handling.c put_stuff.c \
 				\
 				convert_stuff.c free_stuff.c \
