@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 21:08:16 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/10 23:24:07 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ if we got hit by a line (even ours) we exit. */
 		color = 0xFF0000;
 	else
 		color = 0xFFFFFF;
-	// put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
+	put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
 	//my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
 	if (lobby[index].tar[0] || lobby[index].tar[1])
 	{
@@ -180,15 +180,9 @@ static int	put_map(t_mlx *mlx, char **map)
 			// ft_printf("x = %d\n", j);
 			if (map[i][j] == '1')
 			{
-				int	wall_coord[2] = { j * 100, i * 100 };
-				int	slide = my_dist(wall_coord, mlx->lobby[*mlx->index].pos) / 10;// sqrt(abs(mlx->lobby[*mlx->index].pos[1] - wall_coord[1])) * abs(mlx->lobby[*mlx->index].pos[0] - wall_coord[0]);
-				if (wall_coord[0] < mlx->lobby[*mlx->index].pos[0])
-					wall_coord[0] -= slide;
-				if (wall_coord[0] > mlx->lobby[*mlx->index].pos[0])
-					wall_coord[0] += slide;
+				int	wall_coord[2] = { j * 100 , i * 100 };
 				// if ((abs(mlx->lobby[*mlx->index].pos[0] - wall_coord[0]) < 100))
-				if (wall_coord[1] < mlx->lobby[*mlx->index].pos[1])
-					put_square(mlx, wall_coord[0], mlx->win_y / 2, 0, mlx->win_y - (abs(mlx->lobby[*mlx->index].pos[1] - wall_coord[1])), 0xf80f0c);
+				put_square(mlx, wall_coord[0], wall_coord[1], 0, 100, 0xf80f0c);
 				// future put wall
 			}
 			j++;
@@ -196,6 +190,54 @@ static int	put_map(t_mlx *mlx, char **map)
 		i++;
 	}
 	return (0);
+}
+
+/* function that tells me in wich square I am (z coord discarded)*/
+static t_point	point_to_quare(int x, int y)
+{
+	t_point	square;
+
+	square.x = (x / 100);
+	square.y = (y / 100);
+	return (square);
+}
+
+/* GET A RAY? */
+/* let's cast the ray in fron */
+/* the smallest segment is one "block" */
+/* were to draw? front pixed */
+/* just check every "block if is full, if it is of what is full?" */
+/* each other pixel has different rays (angles) */
+/* x and y are the pixel's coordinates */
+static unsigned int	cast_ray(t_mlx *mlx, t_local player, int x, int y)
+{
+	t_point	ray;
+	/* each pixel's angle */
+	const float x_angle = player.dir[0] + (player.fov[0] * M_PI / 180) * cos((mlx->win_x / 2) - x);
+	const float y_angle = player.dir[1] + (player.fov[1] * M_PI / 180) * cos((mlx->win_y / 2) - y);
+
+	/* what's the first block my ray intersect? */
+	/* where does the ray start? my pos */
+	/* ! ! ! MAP COORDINATES ! ! ! */
+	ray.x = player.pos[0];
+	ray.y = player.pos[1];
+	ray.z = 100 / 2;	// arbitrary height of the head
+
+	/* let's do x-intersection first */
+	/* if we are in the middle of the square:
+		45 < x_angle < -45 north cube, and so on... */
+	// y = sin(angle_x) * x
+	t_point original;
+
+	int	incr = x_angle >= 0 ? 10 : -10;
+	/* map borders */
+	while (ray.x <= 500 && ray.x >= 0
+		&& ray.y <= 500 && ray.y >= 0)
+	{
+		ray.x += incr;
+		ray.y = sin(x_angle) * ray.x;
+	}
+	
 }
 
 static int	put_board(t_mlx *mlx)
