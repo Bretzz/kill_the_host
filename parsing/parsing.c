@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ade-ross <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 21:57:18 by ade-ross          #+#    #+#             */
-/*   Updated: 2025/05/09 19:03:08 by ade-ross         ###   ########.fr       */
+/*   Updated: 2025/05/09 21:50:33 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "parsing.h"
 
 //helper of check_all_characters_are_present
 void	check_characters_array(int *characters_arr, char *map_line)

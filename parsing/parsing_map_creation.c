@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_map_creation.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 17:54:25 by ale               #+#    #+#             */
-/*   Updated: 2025/05/09 20:28:21 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 21:51:24 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "parsing.h"
 
 void	check_ber(char *s)
 {
@@ -23,7 +23,7 @@ void	check_ber(char *s)
 	error("map is not .ber", NULL, NULL);
 }
 
-char	*create_map_line(int fd)
+static char	*create_map_line(int fd)
 {
 	char	*str;
 	char	*temp;
@@ -57,17 +57,17 @@ char	*create_map_line(int fd)
 	return (str);
 }
 
-char	**create_map(char *map_line)
+static char	**create_map(char *map_line)
 {
 	char	**map;
-	int		len;
-	int		x;
+	// int		len;
+	// int		x;
 
 	map = ft_split(map_line, '\n');
 	if (!map)
 		error("malloc failed in map creation", NULL, map_line);
-	len = ft_strlen_m(map[0]);
-	x = 1;
+	// len = ft_strlen_m(map[0]);
+	// x = 1;
 	/* while (map[x] != NULL) // levato che mappa debba essere rettangolare
 	{
 		if (len != ft_strlen_m

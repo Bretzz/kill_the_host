@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   clean_exit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 12:02:14 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 21:09:37 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 21:47:47 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	clean_exit(t_mlx *mlx)
 	
 	//freeing mlx resources 
 	mlx_destroy_window(mlx->mlx, mlx->win);
-	mlx_destroy_display(mlx->mlx);
+	// mlx_destroy_display(mlx->mlx);
 	free(mlx->mlx);
 	// *mlx->index = -1;
 	// ! ! !  ! ! ! ! ! ! ! ! ! ! ! | set index -1 | ! ! ! ! ! ! ! ! ! ! !

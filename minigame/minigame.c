@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minigame.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 21:08:16 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/09 21:53:22 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,8 @@ if we got hit by a line (even ours) we exit. */
 		color = 0xFF0000;
 	else
 		color = 0xFFFFFF;
-	// put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
-	//my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
+	put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
+	// my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
 	if (lobby[index].tar[0] || lobby[index].tar[1])
 	{
 		if (lineframes[index] == 12)
@@ -163,7 +163,7 @@ int put_south_wall(t_mlx *mlx, int x, int y, float z, unsigned int color)
 
 /* null terminated array of null terminated strings. */
 /* map coord -> real coord = map coord * 100)*/
-static int	put_map(t_mlx *mlx, char **map)
+/* static  */int	put_map(t_mlx *mlx, char **map)
 {
 	unsigned int	i;
 	size_t			j;
@@ -208,7 +208,7 @@ static int	put_board(t_mlx *mlx)
 	if (!mlx->img.img || !mlx->img.addr)
 		return (0);
 
-	put_map(mlx, mlx->map);
+	// put_map(mlx, mlx->map);
 
 	i = 0;
 	while (i < MAXPLAYERS)
@@ -247,7 +247,7 @@ static int	update_frame(t_mlx *mlx)
 			// ft_printf("send_all(%p, %s, %u)\n", mlx, buffer, ft_strlen(buffer));
 			send_all(mlx, buffer, ft_strlen(buffer), 0);
 		}
-		mlx_mouse_get_pos(mlx->mlx, mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
+		mlx_mouse_get_pos(/* mlx->mlx,  */mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
 		put_board(mlx);
 	}
 	usleep(1000);
