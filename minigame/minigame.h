@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minigame.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/10 22:55:13 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/11 00:52:54 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@
 // for msg creation
 # include "online.h"
 
-# define MLX_WIN_X 500
-# define MLX_WIN_Y 500
+# define MLX_WIN_X 600
+# define MLX_WIN_Y 600
 
 typedef struct s_point
 {
@@ -85,7 +85,7 @@ typedef struct s_mlx
 	void			*win;
 	t_img			img;
 	char			**map;
-	int				watch;		// 0/360 = north; 180 = south...
+	t_local			player;		// 0/360 = north; 180 = south...
 	int				mouse[2];
 	t_player		*lobby;
 	int				*index;

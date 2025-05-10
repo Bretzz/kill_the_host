@@ -6,11 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/05/09 21:53:22 by totommi          ###   ########.fr       */
-=======
-/*   Updated: 2025/05/10 23:24:07 by topiana-         ###   ########.fr       */
->>>>>>> 99eb37a2160b411479f262e0cefe670aed4d9009
+/*   Updated: 2025/05/11 01:17:13 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +74,7 @@ if we got hit by a line (even ours) we exit. */
 	else
 		color = 0xFFFFFF;
 	put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
-<<<<<<< HEAD
 	// my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
-=======
-	//my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
->>>>>>> 99eb37a2160b411479f262e0cefe670aed4d9009
 	if (lobby[index].tar[0] || lobby[index].tar[1])
 	{
 		if (lineframes[index] == 12)
@@ -188,7 +180,7 @@ int put_south_wall(t_mlx *mlx, int x, int y, float z, unsigned int color)
 			// ft_printf("x = %d\n", j);
 			if (map[i][j] == '1')
 			{
-				int	wall_coord[2] = { j * 100 , i * 100 };
+				int	wall_coord[2] = { (j * 100) + 50 , (i * 100) + 50 };
 				// if ((abs(mlx->lobby[*mlx->index].pos[0] - wall_coord[0]) < 100))
 				put_square(mlx, wall_coord[0], wall_coord[1], 0, 100, 0xf80f0c);
 				// future put wall
@@ -220,10 +212,13 @@ static t_point	point_to_quare(int x, int y)
 static unsigned int	cast_ray(t_mlx *mlx, t_local player, int x, int y)
 {
 	t_point	ray;
+	(void)y;
 	/* each pixel's angle */
-	const float x_angle = player.dir[0] + (player.fov[0] * M_PI / 180) * cos((mlx->win_x / 2) - x);
-	const float y_angle = player.dir[1] + (player.fov[1] * M_PI / 180) * cos((mlx->win_y / 2) - y);
+	const float angle_x = player.dir[0] + (player.fov[0] * M_PI / 180) * (1.0f - ((float)x / (mlx->win_x / 2)));
+	const float angle_y = player.dir[1] + (player.fov[1] * M_PI / 180) * (1.0f - ((float)y / (mlx->win_y / 2)));
 
+	// if (y) {ft_printf("angle_x of [%d,%d] = %f\n", x, y, angle_x);}
+	// if (y) {ft_printf("angle_y of [%d,%d] = %f\n", x, y, angle_y);}
 	/* what's the first block my ray intersect? */
 	/* where does the ray start? my pos */
 	/* ! ! ! MAP COORDINATES ! ! ! */
@@ -233,19 +228,31 @@ static unsigned int	cast_ray(t_mlx *mlx, t_local player, int x, int y)
 
 	/* let's do x-intersection first */
 	/* if we are in the middle of the square:
-		45 < x_angle < -45 north cube, and so on... */
+		45 < angle_x < -45 north cube, and so on... */
 	// y = sin(angle_x) * x
-	t_point original;
+	//t_point original = point_to_quare(ray.x, ray.y);
 
-	int	incr = x_angle >= 0 ? 10 : -10;
+	t_point square;
+	int	incr = 99;
+	// ft_printf("incr = %d\n", incr);
 	/* map borders */
-	while (ray.x <= 500 && ray.x >= 0
-		&& ray.y <= 500 && ray.y >= 0)
+	while (ray.x < 600 && ray.x > 0
+		&& ray.y < 600 && ray.y > 0)
 	{
-		ray.x += incr;
-		ray.y = sin(x_angle) * ray.x;
+		if (ray.z > 100)
+			return (0x0000FF);
+		else if (ray.z < 0)
+			return (0x00FF00);
+		square = point_to_quare(ray.x, ray.y);
+		// ft_printf("ray is [%d, %d, %f]\n", (int)ray.x, (int)ray.y, ray.z);
+		if (mlx->map[(int)square.y][(int)square.x] == '1'
+			&& ray.z < 100)
+			return (0xFF0000);
+		ray.x -= incr * sin(angle_x);
+		ray.y -= cos(angle_x) * incr;
+		ray.z += incr * sin(angle_y);
 	}
-	
+	return (0x000000);
 }
 
 static int	put_board(t_mlx *mlx)
@@ -258,7 +265,42 @@ static int	put_board(t_mlx *mlx)
 	if (!mlx->img.img || !mlx->img.addr)
 		return (0);
 
-	// put_map(mlx, mlx->map);
+	put_map(mlx, mlx->map);
+
+	int	pixel[2] = { 0 , 0 };
+	unsigned int	color;
+
+	while (pixel[0] < mlx->win_x)
+	{
+		pixel[1] = 0;
+		while (pixel[1] < mlx->win_y)
+		{
+			color = cast_ray(mlx, mlx->player, pixel[0], pixel[1]);
+			my_pixel_put(mlx, pixel[0], pixel[1], 0, color);
+			pixel[1]++;
+		}
+		pixel[0]++;
+	}
+
+	// pixel[0] = 100;
+	// pixel[1] = 100;
+	// color = cast_ray(mlx, mlx->player, pixel[0], pixel[1]);
+	// put_square(mlx, pixel[0], pixel[1], 0, 10, color);
+
+	// pixel[0] = 500;
+	// pixel[1] = 500;
+	// color = cast_ray(mlx, mlx->player, pixel[0], pixel[1]);
+	// put_square(mlx, pixel[0], pixel[1], 0, 10, color);
+
+	// pixel[0] = 100;
+	// pixel[1] = 500;
+	// color = cast_ray(mlx, mlx->player, pixel[0], pixel[1]);
+	// put_square(mlx, pixel[0], pixel[1], 0, 10, color);
+
+	// pixel[0] = 500;
+	// pixel[1] = 100;
+	// color = cast_ray(mlx, mlx->player, pixel[0], pixel[1]);
+	// put_square(mlx, pixel[0], pixel[1], 0, 10, color);
 
 	i = 0;
 	while (i < MAXPLAYERS)
@@ -331,6 +373,12 @@ int	minigame(int *index, int *socket, void *thread)
 	mlx.index = index;
 	mlx.socket = socket;
 	mlx.thread = thread;
+	mlx.player.pos = mlx.lobby[*mlx.index].pos;
+	mlx.player.tar = mlx.lobby[*mlx.index].tar;
+	mlx.player.fov[0] = 30;
+	mlx.player.fov[1] = 30;
+	mlx.player.dir[0] = 0;
+	mlx.player.dir[1] = 0;
 	ft_printf("bvefore map\n");
 	mlx.map = handle_map("parsing/maps/square.ber");
 	if (mlx.map == NULL)
