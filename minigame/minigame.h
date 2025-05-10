@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 19:39:35 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/10 22:55:13 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 
 // just for colors, ft_perror, print_quick_lobby handle_map
 # include "kill_the_host.h"
+
+# include <math.h>
 
 // for msg creation
 # include "online.h"
@@ -52,6 +54,15 @@ typedef struct s_point
 // 	int					num;
 // 	// pthread_mutex_t		*mutex;
 // }				t_player;
+
+typedef struct s_local
+{
+	int		*pos;		// pointer to the lobby's pos
+	int		*tar;		// pointer to the lobby's tar
+	int		fov[2];		// xvof, yfov
+	float	dir[2];		// 0/2pi = nord (x), front (y)
+}				t_local;
+
 
 //mlx img variables
 typedef struct s_img
