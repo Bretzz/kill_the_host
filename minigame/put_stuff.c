@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:31:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 18:46:36 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/15 22:19:28 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,15 +66,15 @@ int	put_line(t_mlx *mlx, int *p, int *t, int *my_pos, int offset, unsigned int c
 		e2 = 2 * err;
 		if (e2 >= dy) { err += dy; proj[0] += sx; } /* e_xy+e_x > 0 */
 		if (e2 <= dx) { err += dx; proj[1] += sy; } /* e_xy+e_y < 0 */
-
+		
+		my_pixel_put(mlx, proj[0], proj[1], 0, color);
+		(void)offset;
+		// if (i == offset)
+		// {
+			// 	put_square(mlx, proj[0], proj[1], 0, 10, color);
+			// 	break ;
+			// }
 		//my stuff (death check)
-		if (i == offset)
-		{
-			//my_pixel_put(mlx, proj[0], proj[1], 0, color);
-			put_square(mlx, proj[0], proj[1], 0, 10, color);
-			break ;
-		}
-		// ft_printf("printing %i %i\n", p[0], p[1]);
 		if (i > 5 && abs(proj[0] - my_pos[0]) < 5 && abs(proj[1] - my_pos[1]) < 5) return (0);
 
 		if (proj[0] == t[0] && proj[1] == t[1]) break;

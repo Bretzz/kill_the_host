@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minigame.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/11 00:52:54 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/15 23:52:53 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,5 +106,7 @@ void	put_square(void *my_struct, int x, int y, float z, int side, unsigned int c
 void	send_all(t_mlx *mlx, char *msg, size_t msg_size, char flag);
 
 int 	clean_exit(t_mlx *mlx);
+
+int	cast_ray(t_mlx *mlx, int *pos, int *tar);
 
 #endif
