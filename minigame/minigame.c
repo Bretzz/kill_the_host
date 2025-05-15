@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 00:11:33 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 00:13:47 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ int	cast_ray(t_mlx *mlx, int *pos, int *tar)
 		i++;
 	}
 	ft_printf("%d intersection: [%d, %d]\n", i, ray[0], ray[1]);
-	return (1);
+	return (10);
 }
 
 /* null terminated array of null terminated strings. */

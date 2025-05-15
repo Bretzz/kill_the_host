@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:35:27 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 00:02:41 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 00:13:57 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 		mlx->lobby[*mlx->index].tar[0] = x;
 		mlx->lobby[*mlx->index].tar[1] = y;
 		ft_printf("RAT-RAY!!!\n");
-		ft_printf("ray of length %f\n", cast_ray(mlx, mlx->lobby[*mlx->index].pos, mlx->lobby[*mlx->index].tar));
+		ft_printf("ray of length %d\n", cast_ray(mlx, mlx->lobby[*mlx->index].pos, mlx->lobby[*mlx->index].tar));
 	}
 	else
 		ft_printf("Mouse thing N. %d\n", keysym);
