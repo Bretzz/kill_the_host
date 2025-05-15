@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/15 23:52:53 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 00:47:08 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ typedef struct s_local
 	int		*pos;		// pointer to the lobby's pos
 	int		*tar;		// pointer to the lobby's tar
 	int		fov[2];		// xvof, yfov
-	float	dir[2];		// 0/2pi = nord (x), front (y)
+	float	dir[2];		// pi/2 = nord (x), front (y)
 }				t_local;
 
 
@@ -107,6 +107,6 @@ void	send_all(t_mlx *mlx, char *msg, size_t msg_size, char flag);
 
 int 	clean_exit(t_mlx *mlx);
 
-int	cast_ray(t_mlx *mlx, int *pos, int *tar);
+int	cast_ray(t_mlx *mlx, int *pos, float angle);
 
 #endif

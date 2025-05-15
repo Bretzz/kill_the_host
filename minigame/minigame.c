@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 00:13:47 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 01:00:36 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,9 +112,9 @@ int	my_dist(const int *a, const int *b)
 
 
 /* returns the length of the ray (0 if out of borders?) */
-int	cast_ray(t_mlx *mlx, int *pos, int *tar)
+int	cast_ray(t_mlx *mlx, int *pos, float angle)
 {
-	const float angle = atan2((pos[1] - tar[1]), (pos[0] - tar[0]));
+	// const float angle = atan2((pos[1] - tar[1]), (pos[0] - tar[0]));
 	int	incr[2];
 	int	dir[2];
 	int	ray[2];
@@ -131,15 +131,15 @@ int	cast_ray(t_mlx *mlx, int *pos, int *tar)
 	incr[0] = abs(ray[0] - (incr[0] * 100));
 	incr[1] = abs(ray[1] - (incr[1] * 100));
 
-	ft_printf("angle = %f\ndir[%d,%d]\nincr[%d, %d]\n", angle, dir[0], dir[1], incr[0], incr[1]);
+	// ft_printf("angle = %f\ndir[%d,%d]\nincr[%d, %d]\n", angle, dir[0], dir[1], incr[0], incr[1]);
 	i = 0;
 	while (mlx->map[ray[1] / 100][ray[0] / 100] != '1')
 	{
-		ft_printf("incr[%d,%d]\n", incr[0], incr[1]);
+		// ft_printf("incr[%d,%d]\n", incr[0], incr[1]);
 		if ((/* pos[0] +  */incr[0]) / fabsf(cosf(angle))
 			< (/* pos[1] +  */incr[1]) / fabsf(sinf(angle)))
 		{
-			ft_printf("X\n");
+			// ft_printf("X\n");
 			// move trough x
 			ray[0] = pos[0] + incr[0] * dir[0];
 			ray[1] = pos[1] + incr[0] / fabsf(cosf(angle)) * fabsf(sinf(angle)) * dir[1];
@@ -148,21 +148,21 @@ int	cast_ray(t_mlx *mlx, int *pos, int *tar)
 		}
 		else
 		{
-			ft_printf("Y\n");
+			// ft_printf("Y\n");
 			// move trough y
 			ray[0] = pos[0] + incr[1] / fabsf(sinf(angle)) * fabsf(cosf(angle)) * dir[0];
 			ray[1] = pos[1] + incr[1] * dir[1];
 			// modify incr[1]
 			incr[1] += 100;
 		}
-		ft_printf("RAY: [%d, %d]\n", ray[0], ray[1]);
+		// ft_printf("RAY: [%d, %d]\n", ray[0], ray[1]);
 		if (ray[0] < 0 || ray[0] >= mlx->win_x
 			|| ray[1] < 0 || ray[1] >= mlx->win_y)
-			return (0);
+			return (-1);	//flag it big
 		i++;
 	}
-	ft_printf("%d intersection: [%d, %d]\n", i, ray[0], ray[1]);
-	return (10);
+	// ft_printf("%d intersection: [%d, %d]\n", i, ray[0], ray[1]);
+	return (sqrt(pow(ray[0] - pos[0], 2) + pow(ray[1] - pos[1], 2)));
 }
 
 /* null terminated array of null terminated strings. */
@@ -196,7 +196,7 @@ int	cast_ray(t_mlx *mlx, int *pos, int *tar)
 	return (0);
 }
 
-static int put_grid(t_mlx *mlx)
+/* static  */int put_grid(t_mlx *mlx)
 {
 	int	pos[2];
 	int	tar[2];
@@ -220,6 +220,46 @@ static int put_grid(t_mlx *mlx)
 	return (1);
 }
 
+void	put_centre_line(t_mlx *mlx, int x, int len)
+{
+	int	y;
+
+	if (len < 0)
+		return ;
+	y = 0;
+	while (y < mlx->win_y / 2)
+	{
+		if (len + y > mlx->win_y / 2)
+			break ;
+		my_pixel_put(mlx, x, mlx->win_y / 2 + y, 0, 0xFF0000);
+		my_pixel_put(mlx, x, mlx->win_y / 2 - y, 0, 0xFF0000);
+		y++;
+	}
+}
+
+#include <stdio.h>
+
+int	put_fp_view(t_mlx *mlx)
+{
+	const float delta_angle = (mlx->player.fov[0] * M_PI / 180) / mlx->win_x;	// 0 = left, pi/2 = up
+	float 		angle;
+	int			i;
+	int			len;
+
+	/* ft_ */printf("delta angle %f\n", delta_angle);
+
+	angle = mlx->player.dir[0] - (float)(mlx->player.fov[0] * M_PI / 180) / 2.0f;
+	i = 0;
+	while (i < mlx->win_x)
+	{
+		len = cast_ray(mlx, mlx->player.pos, angle);
+		/* ft_ */printf("casting angle %f, got len %d\n", angle, len);
+		put_centre_line(mlx, i, len);
+		angle += delta_angle;
+		i++;
+	}
+	return (0);
+}
 
 static int	put_board(t_mlx *mlx)
 {
@@ -231,8 +271,9 @@ static int	put_board(t_mlx *mlx)
 	if (!mlx->img.img || !mlx->img.addr)
 		return (0);
 
-	put_map(mlx, mlx->map);
-	put_grid(mlx);
+	// put_map(mlx, mlx->map);
+	// put_grid(mlx);
+	put_fp_view(mlx);
 
 	i = 0;
 	while (i < MAXPLAYERS)
@@ -307,7 +348,7 @@ int	minigame(int *index, int *socket, void *thread)
 	mlx.thread = thread;
 	mlx.player.pos = mlx.lobby[*mlx.index].pos;
 	mlx.player.tar = mlx.lobby[*mlx.index].tar;
-	mlx.player.fov[0] = 30;
+	mlx.player.fov[0] = 90;
 	mlx.player.fov[1] = 30;
 	mlx.player.dir[0] = 0;
 	mlx.player.dir[1] = 0;
