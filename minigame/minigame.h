@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 00:47:08 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 11:48:14 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ typedef struct s_mlx
 	void			*win;
 	t_img			img;
 	char			**map;
+	int				map_dim[2];
 	t_local			player;		// 0/360 = north; 180 = south...
 	int				mouse[2];
 	t_player		*lobby;

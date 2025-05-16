@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 01:00:36 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 13:00:51 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,11 @@ int	cast_ray(t_mlx *mlx, int *pos, float angle)
 			// move trough x
 			ray[0] = pos[0] + incr[0] * dir[0];
 			ray[1] = pos[1] + incr[0] / fabsf(cosf(angle)) * fabsf(sinf(angle)) * dir[1];
+			// checks for collisions
+			if (dir[0] < 0 && (ray[0] / 100) > 0 && mlx->map[ray[1] / 100][(ray[0] / 100) - 1] == '1')
+				break ;
+			if (dir[0] > 0 && (ray[0] / 100) < mlx->map_dim[0] && mlx->map[ray[1] / 100][(ray[0] / 100)] == '1')
+				break ;
 			// modify incr[0]
 			incr[0] += 100;
 		}
@@ -152,6 +157,11 @@ int	cast_ray(t_mlx *mlx, int *pos, float angle)
 			// move trough y
 			ray[0] = pos[0] + incr[1] / fabsf(sinf(angle)) * fabsf(cosf(angle)) * dir[0];
 			ray[1] = pos[1] + incr[1] * dir[1];
+			// checks for collisions
+			if (dir[1] < 0 && (ray[1] / 100) > 0 && mlx->map[(ray[1] / 100) - 1][ray[0] / 100] == '1')
+				break ;
+			if (dir[1] > 0 && (ray[1] / 100) < mlx->map_dim[1] && mlx->map[ray[1] / 100][(ray[0] / 100)] == '1')
+				break ;
 			// modify incr[1]
 			incr[1] += 100;
 		}
@@ -161,6 +171,8 @@ int	cast_ray(t_mlx *mlx, int *pos, float angle)
 			return (-1);	//flag it big
 		i++;
 	}
+	//put_line(mlx, pos, ray, pos, 0, 0xf0f0f0);
+	// put_square(mlx, ray[0], ray[1], 0, 10, 0x00ff00);
 	// ft_printf("%d intersection: [%d, %d]\n", i, ray[0], ray[1]);
 	return (sqrt(pow(ray[0] - pos[0], 2) + pow(ray[1] - pos[1], 2)));
 }
@@ -220,24 +232,36 @@ int	cast_ray(t_mlx *mlx, int *pos, float angle)
 	return (1);
 }
 
+
+#include <stdio.h>
+
+// mlx->win_y * e ^ -x
 void	put_centre_line(t_mlx *mlx, int x, int len)
 {
+	int	heigth;
 	int	y;
 
 	if (len < 0)
 		return ;
+	if (len == 0)
+		heigth = mlx->win_y / 2;
+	// if (len < 100)
+	// 	heigth = (mlx->map_dim[0] * 4.5f * mlx->win_y) / (len / 10 * 10);
+	else
+		heigth = (mlx->map_dim[0] * 4.5f * mlx->win_y) / len;	// dim 0?
+	if (heigth > mlx->win_y / 2)
+		heigth = mlx->win_y / 2;
+		// printf("gaussian %f\n", powf(2.718281f, -len / 10));
+	// len = (mlx->win_y / 2) * powf(2.718281f, -len / 10);
+	ft_printf("heigth of the thing %d\n", heigth);
 	y = 0;
-	while (y < mlx->win_y / 2)
+	while (y < heigth)
 	{
-		if (len + y > mlx->win_y / 2)
-			break ;
 		my_pixel_put(mlx, x, mlx->win_y / 2 + y, 0, 0xFF0000);
 		my_pixel_put(mlx, x, mlx->win_y / 2 - y, 0, 0xFF0000);
 		y++;
 	}
 }
-
-#include <stdio.h>
 
 int	put_fp_view(t_mlx *mlx)
 {
@@ -253,6 +277,8 @@ int	put_fp_view(t_mlx *mlx)
 	while (i < mlx->win_x)
 	{
 		len = cast_ray(mlx, mlx->player.pos, angle);
+		if (len > 0)
+			len = len * cosf(angle - mlx->player.dir[0]);
 		/* ft_ */printf("casting angle %f, got len %d\n", angle, len);
 		put_centre_line(mlx, i, len);
 		angle += delta_angle;
@@ -271,9 +297,11 @@ static int	put_board(t_mlx *mlx)
 	if (!mlx->img.img || !mlx->img.addr)
 		return (0);
 
-	// put_map(mlx, mlx->map);
-	// put_grid(mlx);
+	put_map(mlx, mlx->map);
+	put_grid(mlx);
 	put_fp_view(mlx);
+
+	// put_centre_line(mlx, mlx->win_x / 2, 0);
 
 	i = 0;
 	while (i < MAXPLAYERS)
@@ -356,6 +384,8 @@ int	minigame(int *index, int *socket, void *thread)
 	mlx.map = handle_map("parsing/maps/square.ber");
 	if (mlx.map == NULL)
 		return (1);
+	mlx.map_dim[0] = 6;
+	mlx.map_dim[1] = 6;
 	ft_printf("HOT MAP\n");
 	if (juice_the_pc(&mlx))
 		return (1);
