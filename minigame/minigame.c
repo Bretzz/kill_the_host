@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 18:44:33 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 19:22:29 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,32 @@ int	put_player(t_mlx *mlx, int *my_pos, int *his_pos, unsigned int color)
 	
 	// mlx->win_x = player.fov
 	int centre = mlx->win_x / 2 + (angle - mlx->player.dir[0]) / delta_angle;
-	put_centre_line(mlx, centre - 1, my_dist, 0xed80e9);
-	put_centre_line(mlx, centre, my_dist, 0xed80e9);
-	put_centre_line(mlx, centre + 1, my_dist, 0xed80e9);
+	put_centre_line(mlx, centre - 1, my_dist, color);
+	put_centre_line(mlx, centre, my_dist, color);
+	put_centre_line(mlx, centre + 1, my_dist, color);
+	return (0);
+}
+
+/* 0 it killed us, 1 it didn't */
+int	shoot_laser(t_mlx *mlx, int *pos, float dir, int *my_pos)
+{
+	const float delta_angle = (mlx->player.fov[0] * M_PI / 180) / mlx->win_x;	// 0 = left, pi/2 = up
+	const float kill_angle = normalize_angle(atan2((pos[1] - my_pos[1]), (pos[0] - my_pos[0])));
+	const int	my_dist = sqrt(pow(pos[0] - my_pos[0], 2) + pow(pos[1] - my_pos[1], 2));
+	// mlx->player.fov[1] = 1;
+	if (dir < kill_angle - 10 * delta_angle
+		|| dir > kill_angle + 10 * delta_angle)
+	{
+		ft_printf("DIRECTION OUT\n");
+		return (1);
+	}
+	const int	ray	= cast_ray(mlx, pos, dir);
+	ft_printf("my dist %d, ray %d\n", my_dist, ray);
+	if (ray > 0 && ray < my_dist)
+	{
+		ft_printf("OBSTACLE OUT\n");
+		return (1);
+	}
 	return (0);
 }
 
@@ -88,34 +111,22 @@ int	put_player(t_mlx *mlx, int *my_pos, int *his_pos, unsigned int color)
 if we got hit by a line (even ours) we exit. */
 /* static  */int	handle_player(t_player *lobby, int index, t_mlx *mlx)
 {
-	static int	lineframes[MAXPLAYERS];
+	// static int	lineframes[MAXPLAYERS];
 	unsigned int	color;
 
 	if (!lbb_is_alive(lobby[index]))
 		return (0);
 	if (index == HOST)
-		color = 0xFF0000;
+		color = 0x4F2B4E;
 	else
-		color = 0xFFFFFF;
+		color = 0xed80e9;
 	if (index != *mlx->index)
 		put_player(mlx, mlx->player.pos, mlx->lobby[index].pos, color);
 	// put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
 	// my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
-	if (lobby[index].tar[0] || lobby[index].tar[1])
+	if (index != *mlx->index && lobby[index].tar[0])
 	{
-		if (lineframes[index] == 1)
-		{
-			ft_memset(&lobby[index].tar, 0, sizeof(t_point));
-			lineframes[index] = 0;
-			return (1);
-		}
-		if (!put_line(mlx,
-			lobby[index].pos,
-			lobby[index].tar,
-			mlx->lobby[*mlx->index].pos,
-			0/* lineframes[index] * (sqrt(pow(lobby[index].pos[0] - lobby[index].tar[0], 2)
-				+ pow(lobby[index].pos[1] - lobby[index].tar[1], 2))) / 10 */,
-			color))
+		if (shoot_laser(mlx, lobby[index].pos, (float)lobby[index].tar[0] / 10000, mlx->player.pos) == 0)
 		{
 			if (*mlx->index == HOST)
 			{
@@ -125,8 +136,34 @@ if we got hit by a line (even ours) we exit. */
 			}
 			clean_exit(mlx);
 		}
-		lineframes[index]++;
 	}
+	ft_memset(lobby[index].tar, 0, 3 * sizeof(int));
+	// if (lobby[index].tar[0] || lobby[index].tar[1])
+	// {
+	// 	if (lineframes[index] == 1)
+	// 	{
+	// 		ft_memset(&lobby[index].tar, 0, sizeof(t_point));
+	// 		lineframes[index] = 0;
+	// 		return (1);
+	// 	}
+	// 	if (!put_line(mlx,
+	// 		lobby[index].pos,
+	// 		lobby[index].tar,
+	// 		mlx->lobby[*mlx->index].pos,
+	// 		0/* lineframes[index] * (sqrt(pow(lobby[index].pos[0] - lobby[index].tar[0], 2)
+	// 			+ pow(lobby[index].pos[1] - lobby[index].tar[1], 2))) / 10 */,
+	// 		color))
+	// 	{
+	// 		if (*mlx->index == HOST)
+	// 		{
+	// 			char	buffer[MAXLINE];
+	// 			buffer_player_action(mlx->lobby[index], "host", buffer);
+	// 			send_all(mlx, buffer, ft_strlen(buffer), 0);
+	// 		}
+	// 		clean_exit(mlx);
+	// 	}
+	// 	lineframes[index]++;
+	// }
 	return (1);
 }
 
@@ -489,38 +526,6 @@ static int	update_frame(t_mlx *mlx)
 	
 	if (frame++ % 1 == 0)
 	{
-		// moved = 0;
-		// if (mlx->key_up_dw[0] == 1 && mlx->lobby[*mlx->index].pos[1] -10 > 0 && ++moved)
-		// 	mlx->lobby[*mlx->index].pos[1] -= 10;
-		// if (mlx->key_up_dw[1] == 1 && mlx->lobby[*mlx->index].pos[1] +10 < mlx->win_y && ++moved)
-		// 	mlx->lobby[*mlx->index].pos[1] += 10;
-		// if (mlx->key_lx_rx[0] == 1 && mlx->lobby[*mlx->index].pos[0] -10 > 0 && ++moved)
-		// 	mlx->lobby[*mlx->index].pos[0] -= 10;
-		// if (mlx->key_lx_rx[1] == 1 && mlx->lobby[*mlx->index].pos[0] +10 < mlx->win_x && ++moved)
-		// 	mlx->lobby[*mlx->index].pos[0] += 10;
-		
-		// mouse_movement(mlx);
-		// mlx_mouse_get_pos(mlx->mlx, mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
-		// if (mlx->mouse[0] != mlx->win_x / 2)
-		// {
-		// 	mlx->player.dir[0] += (mlx->mouse[0] - (mlx->win_x / 2)) * delta_angle;
-		// 	// if (mlx->player.dir[0] < -M_PI)
-		// 	// 	mlx->player.dir[0] = M_PI - (-mlx->player.dir[0] - M_PI);
-		// 	// else if (mlx->player.dir[0] > M_PI)
-		// 	// 	mlx->player.dir[0] = -M_PI + (mlx->player.dir[0] - M_PI);
-		// 	mlx->player.dir[0] = normalize_angle(mlx->player.dir[0]);
-		// 	printf("dir0: %f\n", mlx->player.dir[0]);
-		// }
-		// if (mlx->mouse[1] != mlx->win_y / 2)
-		// {
-		// 	mlx->player.dir[1] += ((mlx->win_y / 2) - mlx->mouse[1]);
-		// 	// if (mlx->player.dir[0] < -M_PI)
-		// 	// 	mlx->player.dir[0] = M_PI - (-mlx->player.dir[0] - M_PI);
-		// 	// else if (mlx->player.dir[0] > M_PI)
-		// 	// 	mlx->player.dir[0] = -M_PI + (mlx->player.dir[0] - M_PI);
-		// 	// printf("dir1: %f\n", mlx->player.dir[1]);
-		// }
-		// mlx_mouse_move(mlx->mlx, mlx->win, mlx->win_x / 2, mlx->win_y / 2);
 		move_mouse(mlx);
 		if (move_player(mlx) != 0)
 		{
@@ -528,6 +533,8 @@ static int	update_frame(t_mlx *mlx)
 			// ft_printf("send_all(%p, %s, %u)\n", mlx, buffer, ft_strlen(buffer));
 			send_all(mlx, buffer, ft_strlen(buffer), 0);
 		}
+		mlx->player.pos = mlx->lobby[*mlx->index].pos;
+		mlx->player.tar = mlx->lobby[*mlx->index].tar;
 		put_board(mlx);
 	}
 	usleep(1000);
