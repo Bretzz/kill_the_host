@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 11:48:14 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 18:41:00 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@
 // for msg creation
 # include "online.h"
 
-# define MLX_WIN_X 600
-# define MLX_WIN_Y 600
+# define MLX_WIN_X 800
+# define MLX_WIN_Y 800
 
 typedef struct s_point
 {
@@ -88,6 +88,7 @@ typedef struct s_mlx
 	int				map_dim[2];
 	t_local			player;		// 0/360 = north; 180 = south...
 	int				mouse[2];
+	char			on_window;
 	t_player		*lobby;
 	int				*index;
 	int				*socket;
@@ -99,6 +100,9 @@ int		handle_mouse(int keysym, int x, int y, t_mlx *mlx);
 
 int		handle_just_press(int keysym, void *arg);
 int		handle_just_release(int keysym, void *arg);
+
+int		leave_notify_handler(t_mlx *mlx);
+int		enter_notify_handler(t_mlx *mlx);
 
 void	my_pixel_put(void *my_struct, int x, int y, float z, unsigned int color);
 int		put_line(t_mlx *mlx, int *p, int *t, int *my_pos, int offset, unsigned int color);

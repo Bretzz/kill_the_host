@@ -6,41 +6,35 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 13:00:51 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 18:44:33 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minigame.h"
 #include <unistd.h>
 
-void	send_all(t_mlx *mlx, char *msg, size_t msg_size, char flag);
+void	put_centre_line(t_mlx *mlx, int x, int len, unsigned int color);
 
-// int clean_exit(t_mlx *mlx)
-// {
-// 	char	buffer[92];
-	
-// 	// host and players tell the others to kill them the same way
-// 	buffer_player_action(mlx->lobby[*mlx->index], "kill", buffer);
-	
-// 	//game_sender
-// 	send_all(mlx, buffer, ft_strlen(buffer), 0);
-// 	// if (*mlx->index == HOST)
-// 	// 	ft_memcpy(&socket, mlx->lobby[HOST].online, sizeof(int));
-// 	// else
-// 	// 	ft_memcpy(&socket, &mlx->lobby[HOST].online, sizeof(int));
-// 	shutdown(*mlx->socket, SHUT_RDWR);
-// 	close(*mlx->socket);	// gets the threads out of the syscall
-// 	sleep(1);
-// 	// lbb_kill_player(buffer);	// gets the thread out of the loop
-// 	mlx_destroy_window(mlx->mlx, mlx->win);
-// 	mlx_destroy_display(mlx->mlx);
-// 	print_lobby(mlx->lobby);
-// 	// wait the thread
-// 	lbb_delete_lobby((lbb_get_ptr(NULL)));
-// 	free(mlx->mlx);
-// 	exit(EXIT_SUCCESS);
-// 	return (0);
-// }
+size_t	priv_mtxlen(const void **mtx)
+{
+	size_t	i;
+
+	i = 0;
+	while (mtx[i] != NULL)
+		i++;
+	return (i);
+}
+
+// Normalize the angle to stay within the range [0, 2*PI)
+float normalize_angle(float angle)
+{
+	if (angle < -M_PI)
+		return (M_PI - (-angle - M_PI));
+	else if (angle > M_PI)
+		return (-M_PI + (angle - M_PI));
+	return (angle);
+}
+
 
 void	send_all(t_mlx *mlx, char *msg, size_t size, char flag)
 {
@@ -60,6 +54,36 @@ void	send_all(t_mlx *mlx, char *msg, size_t size, char flag)
 	}
 }
 
+
+int	put_player(t_mlx *mlx, int *my_pos, int *his_pos, unsigned int color)
+{
+	(void)mlx; (void)my_pos; (void)his_pos; (void)color;
+	const float delta_angle = (mlx->player.fov[0] * M_PI / 180) / mlx->win_x;	// 0 = left, pi/2 = up
+	const float angle = normalize_angle(atan2((my_pos[1] - his_pos[1]), (my_pos[0] - his_pos[0])));
+	const int	my_dist = sqrt(pow(his_pos[0] - my_pos[0], 2) + pow(his_pos[1] - my_pos[1], 2));
+	// mlx->player.fov[1] = 1;
+	const int	ray	= cast_ray(mlx, my_pos, angle);
+	// mlx->player.fov[1] = 0;
+
+	(void)delta_angle;
+	// ft_printf("player dist = %d\n", my_dist);
+	// visibility check
+	if (angle < mlx->player.dir[0] - mlx->player.fov[0] * M_PI / 90
+		|| angle > mlx->player.dir[0] + mlx->player.fov[0] * M_PI / 90)
+		return (1);
+	if (ray > 0 && ray < my_dist)
+		return (1);
+	// visibility check
+	// put_square(mlx, mlx->win_x / 2, mlx->win_y / 2, 0, 10, 0xed80e9);
+	
+	// mlx->win_x = player.fov
+	int centre = mlx->win_x / 2 + (angle - mlx->player.dir[0]) / delta_angle;
+	put_centre_line(mlx, centre - 1, my_dist, 0xed80e9);
+	put_centre_line(mlx, centre, my_dist, 0xed80e9);
+	put_centre_line(mlx, centre + 1, my_dist, 0xed80e9);
+	return (0);
+}
+
 /* puts all the player info, position and target (with line for shot).
 if we got hit by a line (even ours) we exit. */
 /* static  */int	handle_player(t_player *lobby, int index, t_mlx *mlx)
@@ -73,7 +97,9 @@ if we got hit by a line (even ours) we exit. */
 		color = 0xFF0000;
 	else
 		color = 0xFFFFFF;
-	put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
+	if (index != *mlx->index)
+		put_player(mlx, mlx->player.pos, mlx->lobby[index].pos, color);
+	// put_square(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], 10, color);
 	// my_pixel_put(mlx, lobby[index].pos[0], lobby[index].pos[1], lobby[index].pos[2], color);
 	if (lobby[index].tar[0] || lobby[index].tar[1])
 	{
@@ -166,13 +192,19 @@ int	cast_ray(t_mlx *mlx, int *pos, float angle)
 			incr[1] += 100;
 		}
 		// ft_printf("RAY: [%d, %d]\n", ray[0], ray[1]);
-		if (ray[0] < 0 || ray[0] >= mlx->win_x
-			|| ray[1] < 0 || ray[1] >= mlx->win_y)
+		if (ray[0] < 0 || ray[0] >= mlx->map_dim[0] * 100
+			|| ray[1] < 0 || ray[1] >= mlx->map_dim[1] * 100)
 			return (-1);	//flag it big
 		i++;
 	}
 	//put_line(mlx, pos, ray, pos, 0, 0xf0f0f0);
-	// put_square(mlx, ray[0], ray[1], 0, 10, 0x00ff00);
+
+	// if (angle == mlx->player.dir[0])
+	// 	put_square(mlx, ray[0], ray[1], 0, 30, 0x0000ff);
+	// else
+	if (mlx->player.fov[1] != 0)
+		put_square(mlx, ray[0], ray[1], 0, 10, 0x00ff00);
+	
 	// ft_printf("%d intersection: [%d, %d]\n", i, ray[0], ray[1]);
 	return (sqrt(pow(ray[0] - pos[0], 2) + pow(ray[1] - pos[1], 2)));
 }
@@ -236,7 +268,7 @@ int	cast_ray(t_mlx *mlx, int *pos, float angle)
 #include <stdio.h>
 
 // mlx->win_y * e ^ -x
-void	put_centre_line(t_mlx *mlx, int x, int len)
+void	put_centre_line(t_mlx *mlx, int x, int len, unsigned int color)
 {
 	int	heigth;
 	int	y;
@@ -253,35 +285,80 @@ void	put_centre_line(t_mlx *mlx, int x, int len)
 		heigth = mlx->win_y / 2;
 		// printf("gaussian %f\n", powf(2.718281f, -len / 10));
 	// len = (mlx->win_y / 2) * powf(2.718281f, -len / 10);
-	ft_printf("heigth of the thing %d\n", heigth);
+	// ft_printf("heigth of the thing %d\n", heigth);
+
+	// y = 0;
+	// while (y < mlx->player.dir[1] + mlx->win_y / 2 + heigth)
+	// {
+	// 	my_pixel_put(mlx, x, y, 0, 0xadd8e6);
+	// 	y++;
+	// }
 	y = 0;
 	while (y < heigth)
 	{
-		my_pixel_put(mlx, x, mlx->win_y / 2 + y, 0, 0xFF0000);
-		my_pixel_put(mlx, x, mlx->win_y / 2 - y, 0, 0xFF0000);
+		my_pixel_put(mlx, x, mlx->player.dir[1] + (mlx->win_y / 2) + y, 0, color);
+		my_pixel_put(mlx, x, mlx->player.dir[1] + (mlx->win_y / 2) - y, 0, color);
 		y++;
 	}
+	// y += mlx->win_y / 2;
+	// while (y < mlx->player.dir[1] + mlx->win_y )
+	// {
+	// 	my_pixel_put(mlx, x, y, 0, 0xffffc5);
+	// 	y++;
+	// }
+}
+
+int	put_sky_floor(t_mlx *mlx)
+{
+	int	pixel[2];
+
+	pixel[1] = 0;
+	while (pixel[1] < mlx->win_y)
+	{
+		pixel[0] = 0;
+		while (pixel[0] < mlx->win_x)
+		{
+			if (pixel[1] < mlx->player.dir[1] + mlx->win_y / 2)
+				my_pixel_put(mlx, pixel[0], pixel[1], 0, 0xadd8e6);
+			else
+				my_pixel_put(mlx, pixel[0], pixel[1], 0, 0xffffc5);
+			pixel[0]++;
+		}
+		pixel[1]++;
+	}
+	return (0);
+}
+
+int	put_crosshair(t_mlx *mlx)
+{
+	int	i;
+
+	i = -10;
+	while (i < 11)
+	{
+		my_pixel_put(mlx, mlx->win_x / 2 + i, mlx->win_y / 2, 0, 0xffffff);
+		my_pixel_put(mlx, mlx->win_x / 2, mlx->win_y / 2 + i, 0, 0xffffff);
+		i++;
+	}
+	return (0);
 }
 
 int	put_fp_view(t_mlx *mlx)
 {
 	const float delta_angle = (mlx->player.fov[0] * M_PI / 180) / mlx->win_x;	// 0 = left, pi/2 = up
-	float 		angle;
 	int			i;
 	int			len;
 
-	/* ft_ */printf("delta angle %f\n", delta_angle);
+	// /* ft_ */printf("DIR %f\n", mlx->player.dir[0]);
 
-	angle = mlx->player.dir[0] - (float)(mlx->player.fov[0] * M_PI / 180) / 2.0f;
-	i = 0;
-	while (i < mlx->win_x)
+	i = -mlx->win_x / 2;
+	while (i <= mlx->win_x / 2)
 	{
-		len = cast_ray(mlx, mlx->player.pos, angle);
+		len = cast_ray(mlx, mlx->player.pos, normalize_angle(mlx->player.dir[0] + i * delta_angle));
 		if (len > 0)
-			len = len * cosf(angle - mlx->player.dir[0]);
-		/* ft_ */printf("casting angle %f, got len %d\n", angle, len);
-		put_centre_line(mlx, i, len);
-		angle += delta_angle;
+			len = (float)len * cosf(i * delta_angle);
+		// /* ft_ */printf("casting pixel %d, wit angle %f, got len %d\n", i, mlx->player.dir[0] + i * delta_angle, len);
+		put_centre_line(mlx, i + mlx->win_x / 2, len, 0xff0000);
 		i++;
 	}
 	return (0);
@@ -297,9 +374,11 @@ static int	put_board(t_mlx *mlx)
 	if (!mlx->img.img || !mlx->img.addr)
 		return (0);
 
-	put_map(mlx, mlx->map);
-	put_grid(mlx);
+	// put_map(mlx, mlx->map);
+	// put_grid(mlx);
+	put_sky_floor(mlx);
 	put_fp_view(mlx);
+	put_crosshair(mlx);
 
 	// put_centre_line(mlx, mlx->win_x / 2, 0);
 
@@ -317,30 +396,138 @@ static int	put_board(t_mlx *mlx)
 	return (1);
 }
 
+int	move_player(t_mlx *mlx)
+{
+	const int	move_speed = 5;  // Speed of movement
+	int			new_pos[2];
+	int			moved[2];
+
+	ft_memmove(new_pos, mlx->player.pos, 2 * sizeof(int));
+	ft_bzero(moved, 2 * sizeof(int));
+	if (mlx->key_up_dw[1] == 1) {
+		// Calculate the new X and Y positions using the player's direction
+		new_pos[0] += cosf(mlx->player.dir[0]) * move_speed;
+		new_pos[1] += sinf(mlx->player.dir[0]) * move_speed;
+		++moved[0];
+	}
+	
+	// Move backward (decrease position in direction opposite to the player's facing)
+	if (mlx->key_up_dw[0] == 1) {
+		new_pos[0] -= cosf(mlx->player.dir[0]) * move_speed;
+		new_pos[1] -= sinf(mlx->player.dir[0]) * move_speed;
+		++moved[0];
+	}
+	
+	// Move left (rotate 90 degrees counterclockwise and move forward)
+	if (mlx->key_lx_rx[1] == 1) {
+		float left_angle = mlx->player.dir[0] - M_PI_2;  // 90 degrees counterclockwise
+		new_pos[0] += cosf(left_angle) * move_speed;
+		new_pos[1] += sinf(left_angle) * move_speed;
+		++moved[0];
+	}
+	
+	// Move right (rotate 90 degrees clockwise and move forward)
+	if (mlx->key_lx_rx[0] == 1) {
+		float right_angle = mlx->player.dir[0] + M_PI_2;  // 90 degrees clockwise
+		new_pos[0] += cosf(right_angle) * move_speed;
+		new_pos[1] += sinf(right_angle) * move_speed;
+		++moved[0];
+	}
+
+	// if (dir[0] < 0 && (ray[0] / 100) > 0 && mlx->map[ray[1] / 100][(ray[0] / 100) - 1] == '1')
+	// 	break ;
+	// if (dir[0] > 0 && (ray[0] / 100) < mlx->map_dim[0] && mlx->map[ray[1] / 100][(ray[0] / 100)] == '1')
+	// 	break ;
+
+	if (moved[0] && new_pos[0] < mlx->map_dim[0] * 100 && new_pos[0] > 0
+		&& mlx->map[mlx->player.pos[1] / 100][(new_pos[0] / 100)] != '1' && ++moved[1])
+		mlx->player.pos[0] = new_pos[0];
+
+	if (moved[0] && new_pos[1] < mlx->map_dim[1] * 100 && new_pos[1] > 0
+		&& mlx->map[(new_pos[1] / 100)][mlx->player.pos[0] / 100] != '1' && ++moved[1])
+		mlx->player.pos[1] = new_pos[1];
+	return (moved[1]);
+}
+
+int	move_mouse(t_mlx *mlx)
+{
+	const float delta_angle = (mlx->player.fov[0] * M_PI / 180) / mlx->win_x;
+	if (mlx->on_window == 0)
+		return (1);
+	mlx_mouse_get_pos(mlx->mlx, mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
+	if (mlx->mouse[0] != mlx->win_x / 2)
+	{
+		mlx->player.dir[0] += (mlx->mouse[0] - (mlx->win_x / 2)) * delta_angle;
+		// if (mlx->player.dir[0] < -M_PI)
+		// 	mlx->player.dir[0] = M_PI - (-mlx->player.dir[0] - M_PI);
+		// else if (mlx->player.dir[0] > M_PI)
+		// 	mlx->player.dir[0] = -M_PI + (mlx->player.dir[0] - M_PI);
+		mlx->player.dir[0] = normalize_angle(mlx->player.dir[0]);
+		// printf("dir0: %f\n", mlx->player.dir[0]);
+	}
+	if (mlx->mouse[1] != mlx->win_y / 2)
+	{
+		mlx->player.dir[1] += ((mlx->win_y / 2) - mlx->mouse[1]);
+		// if (mlx->player.dir[0] < -M_PI)
+		// 	mlx->player.dir[0] = M_PI - (-mlx->player.dir[0] - M_PI);
+		// else if (mlx->player.dir[0] > M_PI)
+		// 	mlx->player.dir[0] = -M_PI + (mlx->player.dir[0] - M_PI);
+		// printf("dir1: %f\n", mlx->player.dir[1]);
+	}
+	mlx_mouse_move(mlx->mlx, mlx->win, mlx->win_x / 2, mlx->win_y / 2);
+	return (0);
+}
+
+
 static int	update_frame(t_mlx *mlx)
 {
+	// const float delta_angle = (mlx->player.fov[0] * M_PI / 180) / mlx->win_x;
 	static int	frame;
-	char		moved;
+	// int			mouse[2];
+	// char		moved;
 	char		buffer[92];
 	
-	if (frame++ % 20 == 0)
+	if (frame++ % 1 == 0)
 	{
-		moved = 0;
-		if (mlx->key_up_dw[0] == 1 && mlx->lobby[*mlx->index].pos[1] -10 > 0 && ++moved)
-			mlx->lobby[*mlx->index].pos[1] -= 10;
-		if (mlx->key_up_dw[1] == 1 && mlx->lobby[*mlx->index].pos[1] +10 < mlx->win_y && ++moved)
-			mlx->lobby[*mlx->index].pos[1] += 10;
-		if (mlx->key_lx_rx[0] == 1 && mlx->lobby[*mlx->index].pos[0] -10 > 0 && ++moved)
-			mlx->lobby[*mlx->index].pos[0] -= 10;
-		if (mlx->key_lx_rx[1] == 1 && mlx->lobby[*mlx->index].pos[0] +10 < mlx->win_x && ++moved)
-			mlx->lobby[*mlx->index].pos[0] += 10;
-		if (moved != 0)
+		// moved = 0;
+		// if (mlx->key_up_dw[0] == 1 && mlx->lobby[*mlx->index].pos[1] -10 > 0 && ++moved)
+		// 	mlx->lobby[*mlx->index].pos[1] -= 10;
+		// if (mlx->key_up_dw[1] == 1 && mlx->lobby[*mlx->index].pos[1] +10 < mlx->win_y && ++moved)
+		// 	mlx->lobby[*mlx->index].pos[1] += 10;
+		// if (mlx->key_lx_rx[0] == 1 && mlx->lobby[*mlx->index].pos[0] -10 > 0 && ++moved)
+		// 	mlx->lobby[*mlx->index].pos[0] -= 10;
+		// if (mlx->key_lx_rx[1] == 1 && mlx->lobby[*mlx->index].pos[0] +10 < mlx->win_x && ++moved)
+		// 	mlx->lobby[*mlx->index].pos[0] += 10;
+		
+		// mouse_movement(mlx);
+		// mlx_mouse_get_pos(mlx->mlx, mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
+		// if (mlx->mouse[0] != mlx->win_x / 2)
+		// {
+		// 	mlx->player.dir[0] += (mlx->mouse[0] - (mlx->win_x / 2)) * delta_angle;
+		// 	// if (mlx->player.dir[0] < -M_PI)
+		// 	// 	mlx->player.dir[0] = M_PI - (-mlx->player.dir[0] - M_PI);
+		// 	// else if (mlx->player.dir[0] > M_PI)
+		// 	// 	mlx->player.dir[0] = -M_PI + (mlx->player.dir[0] - M_PI);
+		// 	mlx->player.dir[0] = normalize_angle(mlx->player.dir[0]);
+		// 	printf("dir0: %f\n", mlx->player.dir[0]);
+		// }
+		// if (mlx->mouse[1] != mlx->win_y / 2)
+		// {
+		// 	mlx->player.dir[1] += ((mlx->win_y / 2) - mlx->mouse[1]);
+		// 	// if (mlx->player.dir[0] < -M_PI)
+		// 	// 	mlx->player.dir[0] = M_PI - (-mlx->player.dir[0] - M_PI);
+		// 	// else if (mlx->player.dir[0] > M_PI)
+		// 	// 	mlx->player.dir[0] = -M_PI + (mlx->player.dir[0] - M_PI);
+		// 	// printf("dir1: %f\n", mlx->player.dir[1]);
+		// }
+		// mlx_mouse_move(mlx->mlx, mlx->win, mlx->win_x / 2, mlx->win_y / 2);
+		move_mouse(mlx);
+		if (move_player(mlx) != 0)
 		{
 			buffer_player_action(mlx->lobby[*mlx->index], "update", buffer);
 			// ft_printf("send_all(%p, %s, %u)\n", mlx, buffer, ft_strlen(buffer));
 			send_all(mlx, buffer, ft_strlen(buffer), 0);
 		}
-		mlx_mouse_get_pos(mlx->mlx, mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
 		put_board(mlx);
 	}
 	usleep(1000);
@@ -376,16 +563,18 @@ int	minigame(int *index, int *socket, void *thread)
 	mlx.thread = thread;
 	mlx.player.pos = mlx.lobby[*mlx.index].pos;
 	mlx.player.tar = mlx.lobby[*mlx.index].tar;
+	mlx.player.pos[0] = 200;
+	mlx.player.pos[1] = 200;
 	mlx.player.fov[0] = 90;
-	mlx.player.fov[1] = 30;
+	mlx.player.fov[1] = 0;
 	mlx.player.dir[0] = 0;
 	mlx.player.dir[1] = 0;
 	ft_printf("bvefore map\n");
 	mlx.map = handle_map("parsing/maps/square.ber");
 	if (mlx.map == NULL)
 		return (1);
-	mlx.map_dim[0] = 6;
-	mlx.map_dim[1] = 6;
+	mlx.map_dim[0] = ft_strlen(mlx.map[0]);
+	mlx.map_dim[1] = ft_mtxlen((const void **)mlx.map);
 	ft_printf("HOT MAP\n");
 	if (juice_the_pc(&mlx))
 		return (1);
@@ -401,8 +590,14 @@ int	minigame(int *index, int *socket, void *thread)
 	mlx_key_hook(mlx.win, &handle_heypress, &mlx);
 	mlx_hook(mlx.win, KeyPress, KeyPressMask, &handle_just_press, &mlx);
 	mlx_hook(mlx.win, KeyRelease, KeyReleaseMask, &handle_just_release, &mlx);
-	// mlx_do_key_autorepeaton(mlx.mlx);
 	
+	mlx_hook(mlx.win, EnterNotify, (1L << 4), &enter_notify_handler, &mlx);
+	mlx_hook(mlx.win, LeaveNotify, (1L << 5), &leave_notify_handler, &mlx);
+
+
+	// mlx_do_key_autorepeaton(mlx.mlx);
+	mlx_mouse_hide(mlx.mlx, mlx.win);
+
 	//window management
 	mlx_hook(mlx.win, DestroyNotify, StructureNotifyMask, &clean_exit, &mlx);
 	mlx_loop_hook(mlx.mlx, &update_frame, &mlx);

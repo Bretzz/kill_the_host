@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 20:51:32 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/09 19:38:25 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 17:49:33 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ int				ft_chrnum(const char *s, int c);
 void			print_player(t_player player);
 void 			print_lobby(t_player *lobby);
 void			print_quick_lobby(t_player *lobby);
+
+size_t			ft_mtxlen(const void **mtx);
 
 /* ENV INTERFACE */
 

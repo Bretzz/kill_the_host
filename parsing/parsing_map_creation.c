@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_map_creation.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 17:54:25 by ale               #+#    #+#             */
-/*   Updated: 2025/05/09 21:51:24 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/16 18:05:43 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static char	*create_map_line(int fd)
 		error("no map present in file", NULL, NULL);
 	}
 	int	i = 0;
-	while (new_line && i < 6)
+	while (new_line)
 	{
 		ft_printf("line\n");
 		temp = ft_strjoin(str, new_line);

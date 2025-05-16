@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:35:27 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 00:48:15 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 18:40:51 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,25 @@
 
 int	handle_heypress(int keysym, t_mlx *mlx);
 int	handle_mouse(int keysym, int x, int y, t_mlx *mlx);
+
+int	leave_notify_handler(t_mlx *mlx);
+int	enter_notify_handler(t_mlx *mlx);
+
+
+int	leave_notify_handler(t_mlx *mlx)
+{
+	mlx->on_window = 0;
+	mlx_mouse_show(mlx->mlx, mlx->win); // make the cursor visible
+	return (0);
+}
+
+int	enter_notify_handler(t_mlx *mlx)
+{
+	mlx->on_window = 1;
+	mlx_mouse_hide(mlx->mlx, mlx->win); // hide it again
+	return (0);
+}
+
 
 int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 {
