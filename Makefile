@@ -32,14 +32,14 @@ INKS			= -I$(CURDIR) -I$(MSG) -I$(LBB) -I$(LIBFT) -Ionline/ -I$(MLX_DIR)
 ifeq ($(UNAME),Darwin)
 	MLX_DIR		= minilibx_opengl
 	MLX			= $(MLX_DIR)/libmlx.a
-	URL			= https://cdn.intra.42.fr/document/document/31539/minilibx_opengl.tgz
+	URL			= https://cdn.intra.42.fr/document/document/34410/minilibx_macos_opengl.tgz
 	DEFS		=
 	INKS		+= -I/usr/X11/include -I$(MLX_DIR)
 	LINKS		+= -I/opt/homebrew/include -I/usr/X11/include -L/usr/X11/lib -framework OpenGL -framework AppKit
 else ifeq ($(UNAME),Linux)
 	MLX_DIR		= minilibx-linux
 	MLX			= $(MLX_DIR)/libmlx_$(UNAME).a
-	URL			= https://cdn.intra.42.fr/document/document/31538/minilibx-linux.tgz
+	URL			= https://cdn.intra.42.fr/document/document/34409/minilibx-linux.tgz
 	DEFS		=
 	INKS		+= -I/usr/include
 	LINKS		+= -lmlx_Linux -I$(MLX_DIR)
