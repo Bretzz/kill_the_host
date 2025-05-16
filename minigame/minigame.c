@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 19:22:29 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/16 20:03:48 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,11 @@ int	put_player(t_mlx *mlx, int *my_pos, int *his_pos, unsigned int color)
 	
 	// mlx->win_x = player.fov
 	int centre = mlx->win_x / 2 + (angle - mlx->player.dir[0]) / delta_angle;
+	put_centre_line(mlx, centre - 2, my_dist, color);
 	put_centre_line(mlx, centre - 1, my_dist, color);
 	put_centre_line(mlx, centre, my_dist, color);
 	put_centre_line(mlx, centre + 1, my_dist, color);
+	put_centre_line(mlx, centre + 2, my_dist, color);
 	return (0);
 }
 
@@ -317,7 +319,7 @@ void	put_centre_line(t_mlx *mlx, int x, int len, unsigned int color)
 	// if (len < 100)
 	// 	heigth = (mlx->map_dim[0] * 4.5f * mlx->win_y) / (len / 10 * 10);
 	else
-		heigth = (mlx->map_dim[0] * 4.5f * mlx->win_y) / len;	// dim 0?
+		heigth = (mlx->map_dim[0] * (1.0f + (float)mlx->map_dim[0] / mlx->map_dim[1]) * mlx->win_y) / len;	// dim 0?
 	if (heigth > mlx->win_y / 2)
 		heigth = mlx->win_y / 2;
 		// printf("gaussian %f\n", powf(2.718281f, -len / 10));
@@ -476,11 +478,11 @@ int	move_player(t_mlx *mlx)
 	// if (dir[0] > 0 && (ray[0] / 100) < mlx->map_dim[0] && mlx->map[ray[1] / 100][(ray[0] / 100)] == '1')
 	// 	break ;
 
-	if (moved[0] && new_pos[0] < mlx->map_dim[0] * 100 && new_pos[0] > 0
+	if (moved[0] && (new_pos[0] / 100) < mlx->map_dim[0] && new_pos[0] > 0
 		&& mlx->map[mlx->player.pos[1] / 100][(new_pos[0] / 100)] != '1' && ++moved[1])
 		mlx->player.pos[0] = new_pos[0];
 
-	if (moved[0] && new_pos[1] < mlx->map_dim[1] * 100 && new_pos[1] > 0
+	if (moved[0] && (new_pos[1] / 100) < mlx->map_dim[1] && new_pos[1] > 0
 		&& mlx->map[(new_pos[1] / 100)][mlx->player.pos[0] / 100] != '1' && ++moved[1])
 		mlx->player.pos[1] = new_pos[1];
 	return (moved[1]);
