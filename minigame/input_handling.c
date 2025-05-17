@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:35:27 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 22:04:55 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/17 20:05:54 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,14 +94,29 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 		ft_printf(RESET);
 		return (0);
 	}
-	if (keysym == XK_Up || keysym == XK_w || keysym == 126 || keysym == 13)
+	if (/* keysym == XK_Up ||  */keysym == XK_w || keysym == 13/*  || keysym == 126 */)
 		mlx->key_up_dw[0] = 1;
-	else if (keysym == XK_Down || keysym == XK_s || keysym == 125 || keysym == 1)
+	else if (/* keysym == XK_Down ||  */keysym == XK_s || keysym == 1/*  || keysym == 125 */)
 		mlx->key_up_dw[1] = 1;
-	else if (keysym == XK_Left || keysym == XK_a || keysym == 123 || keysym == 0)
+	else if (/* keysym == XK_Left ||  */keysym == XK_a || keysym == 0/*  || keysym == 123 */)
 		mlx->key_lx_rx[0] = 1;
-	else if (keysym == XK_Right || keysym == XK_d || keysym == 124 || keysym == 2)
+	else if (/* keysym == XK_Right ||  */keysym == XK_d || keysym == 2/*  || keysym == 124 */)
 		mlx->key_lx_rx[1] = 1;
+
+	// backup mouse
+	if (keysym == XK_Up || keysym == 126)
+		mlx->player.dir[1] += 10;
+	else if (keysym == XK_Down || keysym == 125)
+		mlx->player.dir[1] -= 10;
+	else if (keysym == XK_Left || keysym == 123)
+		mlx->player.dir[0] -= 10;
+	else if (keysym == XK_Right || keysym == 124)
+		mlx->player.dir[0] += 10;
+	else
+		ft_printf("Key Pressed: %i\n", keysym);
+
+	mlx->player.dir[0] = mlx->player.dir[0] % 360;
+	mlx->player.dir[1] = mlx->player.dir[1] % 360;
 	return (0);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minigame.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 22:12:18 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/17 19:55:29 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,6 @@ float	cast_ray(t_mlx *mlx, int *pos, float angle)
 	int	incr[2];
 	int	dir[2];
 	int	ray[2];
-	int	i;
 
 	ft_memcpy(ray, pos, 2 * sizeof(int));
 	dir[0] = fabsf(angle) > M_PI / 2 ? 1 : -1;
@@ -198,7 +197,6 @@ float	cast_ray(t_mlx *mlx, int *pos, float angle)
 	incr[1] = abs(ray[1] - (incr[1] * 100));
 
 	// ft_printf("angle = %f\ndir[%d,%d]\nincr[%d, %d]\n", angle, dir[0], dir[1], incr[0], incr[1]);
-	i = 0;
 	while (mlx->map[ray[1] / 100][ray[0] / 100] != '1')
 	{
 		// ft_printf("incr[%d,%d]\n", incr[0], incr[1]);
@@ -235,7 +233,6 @@ float	cast_ray(t_mlx *mlx, int *pos, float angle)
 		if (ray[0] < 0 || ray[0] >= mlx->map_dim[0] * 100
 			|| ray[1] < 0 || ray[1] >= mlx->map_dim[1] * 100)
 			return (-1);	//flag it big
-		i++;
 	}
 	//put_line(mlx, pos, ray, pos, 0, 0xf0f0f0);
 
@@ -480,7 +477,7 @@ int	move_mouse(t_mlx *mlx)
 	// const float delta_angle = (mlx->player.fov[0] * M_PI / 180) / mlx->win_x;
 	if (mlx->on_window == 0)
 		return (1);
-	mlx_mouse_get_pos(mlx->mlx, mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
+	mlx_mouse_get_pos(/* mlx->mlx,  */mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
 	if (mlx->mouse[0] != mlx->win_x / 2)
 	{
 		mlx->player.dir[0] += (mlx->mouse[0] - (mlx->win_x / 2));
@@ -502,7 +499,7 @@ int	move_mouse(t_mlx *mlx)
 		// 	mlx->player.dir[0] = -M_PI + (mlx->player.dir[0] - M_PI);
 		// printf("dir1: %f\n", mlx->player.dir[1]);
 	}
-	mlx_mouse_move(mlx->mlx, mlx->win, mlx->win_x / 2, mlx->win_y / 2);
+	mlx_mouse_move(/* mlx->mlx,  */mlx->win, mlx->win_x / 2, mlx->win_y / 2);
 	return (0);
 }
 

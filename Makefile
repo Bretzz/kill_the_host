@@ -16,7 +16,7 @@ RESET			= \033[0m
 NAME			:= game
 UNAME			:= $(shell uname)
 CC				:= cc
-CFLAGS			:= -Wall -Wextra -Werror
+CFLAGS			:= -Wall -Wextra #-Werror
 
 #Libs
 LIBFT			= libft/
