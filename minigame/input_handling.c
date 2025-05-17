@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 15:35:27 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/17 20:05:54 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/17 21:10:51 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 		// mlx->player.tar[0] = x;
 		// mlx->player.tar[1] = y;
 		mlx->player.tar[0] = mlx->player.dir[0];
-		mlx->player.tar[0] = mlx->player.dir[1];
+		mlx->player.tar[1] = mlx->player.dir[1];
 		ft_printf("PIU-PIU!!!\n");
 		//player_specs(mlx->player);
 		buffer_player_action(mlx->lobby[*mlx->index], "update", buffer);
@@ -117,6 +117,7 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 
 	mlx->player.dir[0] = mlx->player.dir[0] % 360;
 	mlx->player.dir[1] = mlx->player.dir[1] % 360;
+	// ft_printf("dir[%d,%d]\n", mlx->player.dir[0], mlx->player.dir[1]);
 	return (0);
 }
 
