@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minigame.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/17 19:55:29 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/19 15:32:46 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -477,7 +477,7 @@ int	move_mouse(t_mlx *mlx)
 	// const float delta_angle = (mlx->player.fov[0] * M_PI / 180) / mlx->win_x;
 	if (mlx->on_window == 0)
 		return (1);
-	mlx_mouse_get_pos(/* mlx->mlx,  */mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
+	mlx_mouse_get_pos(mlx->mlx, mlx->win, &mlx->mouse[0], &mlx->mouse[1]);
 	if (mlx->mouse[0] != mlx->win_x / 2)
 	{
 		mlx->player.dir[0] += (mlx->mouse[0] - (mlx->win_x / 2));
@@ -491,7 +491,7 @@ int	move_mouse(t_mlx *mlx)
 	}
 	if (mlx->mouse[1] != mlx->win_y / 2)
 	{
-		mlx->player.dir[1] += ((mlx->win_y / 2) - mlx->mouse[1]);
+		mlx->player.dir[1] += ((mlx->win_y / 2) - mlx->mouse[1]) / 2;
 		mlx->player.dir[1] = mlx->player.dir[1] % 360;
 		// if (mlx->player.dir[0] < -M_PI)
 		// 	mlx->player.dir[0] = M_PI - (-mlx->player.dir[0] - M_PI);
@@ -499,7 +499,7 @@ int	move_mouse(t_mlx *mlx)
 		// 	mlx->player.dir[0] = -M_PI + (mlx->player.dir[0] - M_PI);
 		// printf("dir1: %f\n", mlx->player.dir[1]);
 	}
-	mlx_mouse_move(/* mlx->mlx,  */mlx->win, mlx->win_x / 2, mlx->win_y / 2);
+	mlx_mouse_move(mlx->mlx, mlx->win, mlx->win_x / 2, mlx->win_y / 2);
 	return (0);
 }
 
