@@ -1,21 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   kill_the_host.h                                    :+:      :+:    :+:   */
+/*   hpc.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 20:51:32 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/20 22:45:14 by totommi          ###   ########.fr       */
+/*   Updated: 2025/05/21 01:14:13 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef KILL_THE_HOST_H
-# define KILL_THE_HOST_H
+/* Host Punch main header */
 
-# include "libft.h"
-# include "lbb.h"
-# include <pthread.h>
+#ifndef HPC_H
+# define HPC_H
 
 //colors
 # define BOLD "\033[1m"
@@ -37,46 +35,28 @@
 # define LISTEN "\033[0;101m"
 # define CONNECT "\033[0;42m"
 
-/* GAME */
-
-int	minigame(int *index, int *socket, void *thread);
-
-/* MAP */
-
-char	**handle_map(char *s);
+# include <pthread.h>
 
 /* ============= MULTIPLAYER ============= */
 
 /* CLIENT */
 
-int	client_sender(int servfd, void *buffer, size_t size);
+int			client_sender(int servfd, void *buffer, size_t size);
 
 /* SERVER */
 
-int server_sender(int socket, char *buffer, void *addr, char flag);
+int			server_sender(int socket, char *buffer, void *addr, char flag);
 
 /* THE REAL DEAL */
 
 pthread_t	get_me_online(int *index, int *socket, char *envp[]);
 
-/* UTILS */
+int			hpc_free(int *socket, int *index, void *thread);
 
-int				ft_perror(const char *string);
-void			free_mtx(void **mtx);
-unsigned int	ip_to_uns(const char *ip);
-int				ft_chrnum(const char *s, int c);
+/* PRINTERS */
 
-void			print_player(t_player player);
-void 			print_lobby(t_player *lobby);
-void			print_quick_lobby(t_player *lobby);
-
-size_t			ft_mtxlen(const void **mtx);
-
-/* ENV INTERFACE */
-
-char	*get_locl_ip(char **env);
-char	*get_serv_ip(char **env);
-char	*get_my_name(char **env);
-int	make_him_host(char *ip, char **env);
+void		print_player(t_player player);
+void		print_lobby(t_player *lobby);
+void		print_quick_lobby(t_player *lobby);
 
 #endif
