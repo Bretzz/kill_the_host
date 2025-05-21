@@ -1,6 +1,0 @@
-libft.a
-obj/
-*.swp
-.vscode/
-a.out
-main.c

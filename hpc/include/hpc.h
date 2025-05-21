@@ -1,42 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   kill_the_host.h                                    :+:      :+:    :+:   */
+/*   hpc.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 20:51:32 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/21 12:08:00 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/21 12:07:20 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef KILL_THE_HOST_H
-# define KILL_THE_HOST_H
+/* Host Punch main header */
 
-# include "hpc.h"
-# include "libft.h"
+#ifndef HPC_H
+# define HPC_H
+
+# include "config.h"
+# include "lbb.h"	// for the lobby struct
 # include <pthread.h>
-
-/* GAME */
-
-int	minigame(int *index, int *socket, void *thread);
-
-/* MAP */
-
-char	**handle_map(char *s);
 
 /* ============= MULTIPLAYER ============= */
 
 /* CLIENT */
 
-int	client_sender(int servfd, void *buffer, size_t size);
+int			client_sender(int servfd, void *buffer, size_t size);
 
 /* SERVER */
 
-int server_sender(int socket, char *buffer, void *addr, char flag);
+int			server_sender(int socket, char *buffer, void *addr, char flag);
 
 /* THE REAL DEAL */
 
 pthread_t	get_me_online(int *index, int *socket, char *envp[]);
+
+int			hpc_free(int *socket, int *index, void *thread);
+
+/* PRINTERS */
+
+void		print_player(t_player player);
+void		print_lobby(t_player *lobby);
+void		print_quick_lobby(t_player *lobby);
+
+/* BUFFER MESSAGES */
+
+char		*buffer_player_action(t_player player, const char *action, void *buffer);
+char		*buffer_lobby_action(t_player *lobby, const char *action, void *buffer);
 
 #endif

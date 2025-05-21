@@ -6,14 +6,13 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:27:55 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 14:14:20 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/04/17 15:56:16 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RE_GET_NEXT_LINE_H
 # define RE_GET_NEXT_LINE_H
 
-# include "libft.h"
 # include <unistd.h>
 
 # ifndef BUFFER_SIZE

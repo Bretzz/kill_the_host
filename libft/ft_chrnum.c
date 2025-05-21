@@ -1,24 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   ft_chrnum.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 21:10:30 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/06 21:13:34 by topiana-         ###   ########.fr       */
+/*   Created: 2025/05/19 21:02:12 by topiana-          #+#    #+#             */
+/*   Updated: 2025/05/19 21:02:24 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_strcmp(const char *s1, const char *s2)
+/* counts how many instances of 'c' in 's'. */
+int	ft_chrnum(const char *s, int c)
 {
-	size_t	i;
+	unsigned int	n;
+	size_t			i;
 
 	i = 0;
-	while (s1[i] && s2[i] && s1[i] != s2[i])
+	n = 0;
+	while (s[i] != '\0')
+	{
+		if (s[i] == c)
+			n++;
 		i++;
-	return ((unsigned char)(s1[i]) - (unsigned char)(s2[i]));
+	}
+	return (n);
 }
-

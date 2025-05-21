@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 17:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 21:39:47 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/21 11:45:18 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 # include <math.h>
 
 // for msg creation
-# include "online.h"
+// # include "online.h"
 
 # define MLX_WIN_X 800
 # define MLX_WIN_Y 800

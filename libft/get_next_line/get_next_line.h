@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:27:55 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 18:00:26 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/19 18:01:49 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ typedef struct s_list_fd
 	struct s_list_fd	*next;
 }			t_list_fd;
 
-char	*get_substr(char const *s, unsigned int start, size_t len);
+char		*get_substr(char const *s, unsigned int start, size_t len);
 t_list_fd	*ft_lstnew_add_back_ptr(int fd, t_list_fd *lst, void *content);
-void	ft_lstclear_fd(int fd, t_list_fd **lst, void (*del)(void*));
+void		ft_lstclear_fd(int fd, t_list_fd **lst, void (*del)(void*));
 
 #endif

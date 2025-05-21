@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 23:13:08 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/19 15:32:46 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/21 11:46:52 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ if we got hit by a line (even ours) we exit. */
 		{
 			if (*mlx->index == HOST)
 			{
-				char	buffer[MAXLINE];
+				char	buffer[1024];
 				buffer_player_action(mlx->lobby[index], "host", buffer);
 				send_all(mlx, buffer, ft_strlen(buffer), 0);
 			}

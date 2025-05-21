@@ -6,11 +6,12 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 21:29:16 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/07 14:14:57 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/04/17 15:54:01 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "re_get_next_line.h"
+#include "libft.h"
 
 t_list_fd	*list_fd_del_fd(int fd, t_list_fd *list);
 t_list_fd	*list_fd_add_back(t_list_fd *list, int fd, char *str);

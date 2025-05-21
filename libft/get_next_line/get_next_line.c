@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 10:18:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/05/16 18:05:36 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/05/19 20:56:55 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static char	*his_sidekick(int fd, char *line, t_list_fd *trubbish,
 {
 	char	*new_line;
 
-	if (!ft_strichr(line, '\n') || !line[ft_strichr(line, '\n') + 1])
+	if (!ft_strichr(line, '\n') || !line[ft_strichr(line, '\n')])
 	{
 		ft_lstclear_fd(fd, leftovers, &free);
 		return (line);
@@ -67,18 +67,13 @@ static char	*the_magician(int fd, char *line, char *buff, t_list_fd **leftovers)
 	while (42)
 	{
 		i = 0;
-		while (i < BUFFER_SIZE)
+		while (i <= BUFFER_SIZE)
 			buff[i++] = '\0';
 		i = read(fd, buff, BUFFER_SIZE);
 		if (i <= 0)
 			break ;
-		if (line == (char *)2 || line == (char *)42)
-		{
-			line = (char *)malloc(1 * sizeof(char));
-			if (!line)
-				return (NULL);
-			line[0] = '\0';
-		}
+		if (line == (char *)42 || line == (char *)2)
+			line = NULL;
 		line = ft_strjoin_free(line, buff);
 		if (!line)
 			return (NULL);
@@ -87,13 +82,11 @@ static char	*the_magician(int fd, char *line, char *buff, t_list_fd **leftovers)
 	}
 	if (i <= 0 && !(!i && (line != (char *)42 && line != (char *)2) && *line))
 	{
-		if ((!i && (line != (char *)42 && line != (char *)2) && !*line)
-			|| (i < 0 && (line != (char *)42 && line != (char *)2)))
+		if (line != (char *)42 && line != (char *)2)
 			free(line);
 		return (NULL);
 	}
-	line = his_sidekick(fd, line, *leftovers, leftovers);
-	return (line);
+	return (his_sidekick(fd, line, *leftovers, leftovers));
 }
 
 /*looks for a node with the current fd, if found
@@ -135,20 +128,15 @@ char	*get_next_line(int fd)
 {
 	static void			*leftovers;
 	char				*line;
-	char				*buff;
+	char				buff[BUFFER_SIZE];
 
 	line = munchlax(fd, (t_list_fd *)leftovers);
-	if (!line)
+	if (line == NULL)
 		return (NULL);
 	else if ((line != (char *)42 && line != (char *)2)
 		&& (ft_strichr(line, '\n')))
 		return (line);
-	buff = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buff)
-		return (NULL);
-	buff[BUFFER_SIZE] = '\0';
 	line = the_magician(fd, line, buff, (t_list_fd **)&leftovers);
-	free(buff);
 	if (!line)
 		ft_lstclear_fd(fd, (t_list_fd **)&leftovers, &free);
 	return (line);
